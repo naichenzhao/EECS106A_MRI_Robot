@@ -356,7 +356,7 @@
         (name "CN6_+5V" (effects (font (size 1.016 1.016))))
         (number "CN6_5" (effects (font (size 1.016 1.016))))
       )
-      (pin power_in line (at 20.32 -10.16 180) (length 5.08)
+      (pin power_in line (at 20.32 -6.35 180) (length 5.08)
         (name "CN6_GND" (effects (font (size 1.016 1.016))))
         (number "CN6_6" (effects (font (size 1.016 1.016))))
       )
