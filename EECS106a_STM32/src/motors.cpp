@@ -141,7 +141,11 @@ void set_a2_motor(int pos) {
 
 void moveSingleStepper(AccelStepper* stepper, int pos){
     stepper->moveTo(pos);
-    stepper->run();
+
+    while ((stepper->currentPosition() - pos) > 100 || (stepper->currentPosition() - pos) < -100)
+    {
+        stepper->run();
+    }
 }
 
 void homeSingleStepper(AccelStepper* stepper, int switch_port){

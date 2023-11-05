@@ -75,9 +75,17 @@ void loop() {
     digitalWrite(13, HIGH);
     delay(1000);
     digitalWrite(13, LOW);
+
+    set_x_motor(nums[0]);
   }
+
+
   
 
+  // set_x_motor(10000);
+  // delay(100);
+  // set_x_motor(0);
+  // delay(100);
 }
 
 
