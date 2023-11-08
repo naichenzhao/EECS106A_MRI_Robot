@@ -37,12 +37,6 @@ void setup() {
 //  + -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- - +
 
 void loop() {
-  // // Set the target position:
-  // x_stepper.moveTo(3000);
-  // // Run to target position with set speed and acceleration/deceleration:
-  // x_stepper.runToPosition();
-
-  int angle1, angle2, angle3, angle4, angle5, angle6;
   if (Serial.available()) {
     // get string of values
     String ser_read = Serial.readStringUntil('\n');
@@ -57,7 +51,8 @@ void loop() {
     // Split the string into ints
     int counter = 0;
     while( token != NULL ) {
-        nums[counter] = ((String) token).toInt();
+        int value = ((String) token).toInt();
+        nums[counter] = (value == -1)?nums[counter]:value;
         token = strtok(NULL, ", ");
         counter ++;
     }
@@ -65,27 +60,16 @@ void loop() {
     // Confirm revieved values by printing them back
     Serial.println("recieved");
     Serial.println(nums[0]);
-    Serial.println(nums[1]);
-    Serial.println(nums[2]);
-    Serial.println(nums[3]);
-    Serial.println(nums[4]);
-    Serial.println(nums[5]);
+    // Serial.println(nums[1]);
+    // Serial.println(nums[2]);
+    // Serial.println(nums[3]);
+    // Serial.println(nums[4]);
+    // Serial.println(nums[5]);
 
-
-    digitalWrite(13, HIGH);
-    delay(1000);
-    digitalWrite(13, LOW);
-
-    set_x_motor(nums[0]);
+    set_motors(nums);
   }
 
-
-  
-
-  // set_x_motor(10000);
-  // delay(100);
-  // set_x_motor(0);
-  // delay(100);
+  run_motors();
 }
 
 

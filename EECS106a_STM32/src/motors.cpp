@@ -36,7 +36,7 @@
 #define A2_HOME PB6
 
 const int MAX_SPEED = 10000;
-const int MAX_ACCELERATION = 1000;
+const int MAX_ACCELERATION = 5000;
 
 const int homing_step = 100;
 const int homing_backoff_step = 1;
@@ -133,6 +133,19 @@ void set_a2_motor(int pos) {
 }
 
 
+void run_motors() {
+    runSingleStepper(&x_stepper);
+    runSingleStepper(&y_stepper);
+    runSingleStepper(&z_stepper);
+    runSingleStepper(&r_stepper);
+    runSingleStepper(&a1_stepper);
+    runSingleStepper(&a2_stepper); 
+
+    // Serial.println(x_stepper.currentPosition());
+}
+
+
+
 
 
 //  + -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- - +
@@ -141,11 +154,14 @@ void set_a2_motor(int pos) {
 
 void moveSingleStepper(AccelStepper* stepper, int pos){
     stepper->moveTo(pos);
+}
 
-    while ((stepper->currentPosition() - pos) > 100 || (stepper->currentPosition() - pos) < -100)
-    {
-        stepper->run();
-    }
+void runSingleStepper(AccelStepper* stepper){
+    // const int LIM = 2;
+    // int diff = (stepper->currentPosition() - stepper->targetPosition());
+
+    // if ( diff > LIM || diff < -LIM)
+    stepper->run();
 }
 
 void homeSingleStepper(AccelStepper* stepper, int switch_port){

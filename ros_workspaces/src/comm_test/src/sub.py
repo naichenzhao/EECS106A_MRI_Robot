@@ -25,6 +25,6 @@ def listener():
 
 if __name__ == '__main__':
     rospy.init_node('listener', anonymous=True)
-    STM = serial.Serial(port='/dev/ttyACM0', baudrate=115200, timeout=.1)
+    STM = serial.Serial(port='/dev/ttyACM1', baudrate=115200, timeout=.1)
 
     listener()
