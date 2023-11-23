@@ -16,9 +16,12 @@ void set_r_motor(int pos);
 void set_a1_motor(int pos);
 void set_a2_motor(int pos);
 
-void homeSingleStepper(AccelStepper *stepper, int switch_port);
-void moveSingleStepper(AccelStepper *stepper, int pos);
-void runSingleStepper(AccelStepper* stepper);
+void runStepperOL(int num);
+void runStepperCL(int num);
 
+void homeSingleStepperSwitch(int num, int switch_port);
+void homeSingleStepperEncoder(int num);
+
+long quick_abs(long value);
 
 #endif

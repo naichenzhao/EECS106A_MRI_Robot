@@ -11,7 +11,7 @@ def callback(message):
     print(": I heard:", angles)
 
     # Send to microcontroller
-    str_send = str(angles)[1:-1] + "\n"
+    str_send = "p" + str(angles)[1:-1] + "\n"
     STM.write(str_send.encode("utf-8"))
 
 
