@@ -9,7 +9,7 @@
 //  + -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- - +
 
 // Position for each motor -> We will use a scale from 0 to 100000
-int positions[6];
+long positions[6];
 int counter = 0;
 
 
@@ -61,15 +61,20 @@ void loop() {
     // Confirm revieved values
     Serial.print("recievd: ");
     Serial.println(ind);
+
+    // set_x_motor(10000);
   }
 
-  if (counter >= 1000) {
-    // Serial.println(get_x());
-    // Serial.println(get_y());
 
-    // Serial.println(" ");
-    // // print_motor_x();
-    // counter = 0;
+  // Everything should be printed in here as to not interfere with stepper motors
+  if (counter >= 10000) {
+    Serial.print(get_x());
+    Serial.print("   ");
+    Serial.print(get_y());
+    Serial.print("   ");
+    Serial.println(get_z());
+
+    counter = 0;
   }
   counter ++;
  
@@ -77,6 +82,7 @@ void loop() {
   // delay(100);
 
   run_motors();
+  // Serial.println("   ");
 }
 
 
@@ -94,10 +100,23 @@ void set_positions(String ser_read) {
   while (token != NULL)
   {
     int value = ((String)token).toInt();
+    value = value > 10000? 10000: value;
     positions[counter] = (value == -1) ? positions[counter] : value;
     token = strtok(NULL, ", ");
     counter++;
   }
+
+  Serial.print(positions[0]);
+  Serial.print("   ");
+  Serial.print(positions[1]);
+  Serial.print("   ");
+  Serial.print(positions[2]);
+  Serial.print("   ");
+  Serial.print(positions[3]);
+  Serial.print("   ");
+  Serial.print(positions[4]);
+  Serial.print("   ");
+  Serial.println(positions[5]);
 
   set_motors(positions);
 }

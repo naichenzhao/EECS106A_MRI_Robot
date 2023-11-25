@@ -38,12 +38,12 @@ volatile long A2_COUNTER = 0;
 
 void setupEncoders() {
     // Set all A ports to internal pullup
-    pinMode(X_A, INPUT_PULLUP);
-    pinMode(Y_A, INPUT_PULLUP);
-    pinMode(Z_A, INPUT_PULLUP);
-    pinMode(R_A, INPUT_PULLUP);
-    pinMode(A1_A, INPUT_PULLUP);
-    pinMode(A2_A, INPUT_PULLUP);
+    pinMode(X_A, INPUT_PULLDOWN);
+    pinMode(Y_A, INPUT_PULLDOWN);
+    pinMode(Z_A, INPUT_PULLDOWN);
+    pinMode(R_A, INPUT_PULLDOWN);
+    pinMode(A1_A, INPUT_PULLDOWN);
+    pinMode(A2_A, INPUT_PULLDOWN);
 
     // Attach respective interrupts to each encoder
     attachInterrupt(digitalPinToInterrupt(X_A), pulseX, RISING);
@@ -109,9 +109,11 @@ long get_a2() {
 //  + -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- - +
 //  | Encoder Interrupt Functions
 //  + -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- - +
+static unsigned long last_interrupt_time = 0;
 
 void pulseX() {
     X_COUNTER += digitalRead(X_B) ? 1 : -1;
+    
 }
 void pulseY() {
     Y_COUNTER += digitalRead(Y_B) ? 1 : -1;

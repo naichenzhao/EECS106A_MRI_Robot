@@ -6,7 +6,7 @@
 
 void setupMotors();
 void homeMotors();
-void set_motors(int positions[]);
+void set_motors(long positions[]);
 void run_motors();
 
 void set_x_motor(int pos);
