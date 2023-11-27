@@ -412,6 +412,12 @@ gantry_BINARY_DIR:STATIC=/home/naichenzhao/Desktop/EECS106A_Project/ros_workspac
 //Value Computed by CMake
 gantry_SOURCE_DIR:STATIC=/home/naichenzhao/Desktop/EECS106A_Project/ros_workspaces/src/gantry
 
+//Value Computed by CMake
+gantry_controller_BINARY_DIR:STATIC=/home/naichenzhao/Desktop/EECS106A_Project/ros_workspaces/build/gantry_controller
+
+//Value Computed by CMake
+gantry_controller_SOURCE_DIR:STATIC=/home/naichenzhao/Desktop/EECS106A_Project/ros_workspaces/src/gantry_controller
+
 //The directory containing a CMake configuration file for geometry_msgs.
 geometry_msgs_DIR:PATH=/opt/ros/noetic/share/geometry_msgs/cmake
 

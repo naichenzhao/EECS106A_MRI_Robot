@@ -169,7 +169,7 @@
         </collision>
     </link>
     <joint name="TMS_1" type="continuous">
-        <origin xyz="0.00034733 -0.00025 -0.34785" rpy="2.266 -0.99955 0.78967" />
+        <origin xyz="0.00034733 -0.00025 -0.34785" rpy="0 0 0" />
         <parent link="R_arm_link" />
         <child link="TMS_1_link" />
         <axis xyz="0.38068 0 0.92471" />
@@ -197,7 +197,7 @@
         </collision>
     </link>
     <joint name="TMS_HEAD" type="continuous">
-        <origin xyz="0 0 0" rpy="1.3245 0.71549 -0.069725" />
+        <origin xyz="0 0 0" rpy="0 0 0" />
         <parent link="TMS_1_link" />
         <child link="TMS_HEAD_link" />
         <axis xyz="0.85728 0.37485 -0.35292" />

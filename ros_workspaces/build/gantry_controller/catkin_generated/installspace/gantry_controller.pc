@@ -1,0 +1,8 @@
+prefix=/home/naichenzhao/Desktop/EECS106A_Project/ros_workspaces/install
+
+Name: gantry_controller
+Description: Description of gantry_controller
+Version: 0.3.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 

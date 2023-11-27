@@ -131,7 +131,7 @@ endif()
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
   include("/home/naichenzhao/Desktop/EECS106A_Project/ros_workspaces/build/gtest/cmake_install.cmake")
-  include("/home/naichenzhao/Desktop/EECS106A_Project/ros_workspaces/build/urdf_testfile/cmake_install.cmake")
+  include("/home/naichenzhao/Desktop/EECS106A_Project/ros_workspaces/build/gantry_controller/cmake_install.cmake")
   include("/home/naichenzhao/Desktop/EECS106A_Project/ros_workspaces/build/comm_test/cmake_install.cmake")
   include("/home/naichenzhao/Desktop/EECS106A_Project/ros_workspaces/build/gantry/cmake_install.cmake")
 
