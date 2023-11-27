@@ -10,13 +10,15 @@ def publisher():
     while not rospy.is_shutdown():
         usr_input = input("Please input 6 motor angles: \n")
 
-        input_split = [int(i) for i in usr_input.split(", ")]
+        input_split_cs = [int(i) for i in usr_input.split(", ")]
+        input_split_s = [int(i) for i in usr_input.split(" ")]
 
-        if not len(input_split) == 6:
+        if (not len(input_split_cs) == 6) and (not len(input_split_s) == 6):
             print("Input is not of length 6, Please try again")
             continue
 
         msg = Int32MultiArray()
+        if (not len(input_split_cs) == 6)
         msg.data = input_split
         
         pub.publish(msg)

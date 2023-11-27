@@ -45,7 +45,7 @@
     </collision>
   </link>
   <link
-    name="X_gantry">
+    name="X_gantry_link">
     <inertial>
       <origin
         xyz="-0.0698541814264949 0.412438460402414 0.612593275517403"
@@ -93,7 +93,7 @@
     <parent
       link="base_link" />
     <child
-      link="X_gantry" />
+      link="X_gantry_link" />
     <axis
       xyz="0.92471 0 -0.38068" />
     <limit
@@ -103,7 +103,7 @@
       velocity="0" />
   </joint>
   <link
-    name="Y_gantry">
+    name="Y_gantry_link">
     <inertial>
       <origin
         xyz="-0.572532898605919 0.330664778033361 0.372011453080152"
@@ -149,9 +149,9 @@
       xyz="0.38439 0 0.19344"
       rpy="0 0 0" />
     <parent
-      link="X_gantry" />
+      link="X_gantry_link" />
     <child
-      link="Y_gantry" />
+      link="Y_gantry_link" />
     <axis
       xyz="0.38068 0 0.92471" />
     <limit
@@ -161,7 +161,7 @@
       velocity="0" />
   </joint>
   <link
-    name="Z_gantry">
+    name="Z_gantry_link">
     <inertial>
       <origin
         xyz="-0.456176964938818 0.104673786807244 0.796550541009001"
@@ -207,9 +207,9 @@
       xyz="-0.16631 0.1855 -0.40398"
       rpy="0 0 0" />
     <parent
-      link="Y_gantry" />
+      link="Y_gantry_link" />
     <child
-      link="Z_gantry" />
+      link="Z_gantry_link" />
     <axis
       xyz="0 1 0" />
     <limit
@@ -219,7 +219,7 @@
       velocity="0" />
   </joint>
   <link
-    name="R_arm">
+    name="R_arm_link">
     <inertial>
       <origin
         xyz="0.000172992865614646 -9.99205360449618E-05 -0.158657609193451"
@@ -265,14 +265,14 @@
       xyz="-0.47182 0.10003 0.80314"
       rpy="3.1416 -1.1803 0" />
     <parent
-      link="Z_gantry" />
+      link="Z_gantry_link" />
     <child
-      link="R_arm" />
+      link="R_arm_link" />
     <axis
       xyz="0 0 1" />
   </joint>
   <link
-    name="TMS_1">
+    name="TMS_1_link">
     <inertial>
       <origin
         xyz="-1.73909482529822E-05 3.88578058618805E-15 -4.22443393599536E-05"
@@ -318,14 +318,14 @@
       xyz="0.00034733 -0.00025 -0.34785"
       rpy="2.266 -0.99955 0.78967" />
     <parent
-      link="R_arm" />
+      link="R_arm_link" />
     <child
-      link="TMS_1" />
+      link="TMS_1_link" />
     <axis
       xyz="0.38068 0 0.92471" />
   </joint>
   <link
-    name="TMS_HEAD">
+    name="TMS_HEAD_link">
     <inertial>
       <origin
         xyz="-0.0274259091798583 -0.011992160041742 0.011290539162308"
@@ -371,9 +371,9 @@
       xyz="0 0 0"
       rpy="1.3245 0.71549 -0.069725" />
     <parent
-      link="TMS_1" />
+      link="TMS_1_link" />
     <child
-      link="TMS_HEAD" />
+      link="TMS_HEAD_link" />
     <axis
       xyz="0.85728 0.37485 -0.35292" />
   </joint>

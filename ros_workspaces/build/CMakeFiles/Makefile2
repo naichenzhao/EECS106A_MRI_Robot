@@ -55,12 +55,14 @@ CMAKE_BINARY_DIR = /home/naichenzhao/Desktop/EECS106A_Project/ros_workspaces/bui
 # The main recursive "all" target.
 all: gtest/all
 all: comm_test/all
+all: gantry/all
 
 .PHONY : all
 
 # The main recursive "preinstall" target.
 preinstall: gtest/preinstall
 preinstall: comm_test/preinstall
+preinstall: gantry/preinstall
 
 .PHONY : preinstall
 
@@ -72,6 +74,7 @@ clean: CMakeFiles/tests.dir/clean
 clean: CMakeFiles/download_extra_data.dir/clean
 clean: gtest/clean
 clean: comm_test/clean
+clean: gantry/clean
 
 .PHONY : clean
 
@@ -111,6 +114,24 @@ comm_test/clean: comm_test/CMakeFiles/roscpp_generate_messages_eus.dir/clean
 comm_test/clean: comm_test/CMakeFiles/std_msgs_generate_messages_py.dir/clean
 
 .PHONY : comm_test/clean
+
+#=============================================================================
+# Directory level rules for directory gantry
+
+# Recursive "all" directory target.
+gantry/all:
+
+.PHONY : gantry/all
+
+# Recursive "preinstall" directory target.
+gantry/preinstall:
+
+.PHONY : gantry/preinstall
+
+# Recursive "clean" directory target.
+gantry/clean: gantry/CMakeFiles/_catkin_empty_exported_target.dir/clean
+
+.PHONY : gantry/clean
 
 #=============================================================================
 # Directory level rules for directory gtest
@@ -952,6 +973,33 @@ std_msgs_generate_messages_py: comm_test/CMakeFiles/std_msgs_generate_messages_p
 comm_test/CMakeFiles/std_msgs_generate_messages_py.dir/clean:
 	$(MAKE) -f comm_test/CMakeFiles/std_msgs_generate_messages_py.dir/build.make comm_test/CMakeFiles/std_msgs_generate_messages_py.dir/clean
 .PHONY : comm_test/CMakeFiles/std_msgs_generate_messages_py.dir/clean
+
+#=============================================================================
+# Target rules for target gantry/CMakeFiles/_catkin_empty_exported_target.dir
+
+# All Build rule for target.
+gantry/CMakeFiles/_catkin_empty_exported_target.dir/all:
+	$(MAKE) -f gantry/CMakeFiles/_catkin_empty_exported_target.dir/build.make gantry/CMakeFiles/_catkin_empty_exported_target.dir/depend
+	$(MAKE) -f gantry/CMakeFiles/_catkin_empty_exported_target.dir/build.make gantry/CMakeFiles/_catkin_empty_exported_target.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/naichenzhao/Desktop/EECS106A_Project/ros_workspaces/build/CMakeFiles --progress-num= "Built target _catkin_empty_exported_target"
+.PHONY : gantry/CMakeFiles/_catkin_empty_exported_target.dir/all
+
+# Build rule for subdir invocation for target.
+gantry/CMakeFiles/_catkin_empty_exported_target.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/naichenzhao/Desktop/EECS106A_Project/ros_workspaces/build/CMakeFiles 0
+	$(MAKE) -f CMakeFiles/Makefile2 gantry/CMakeFiles/_catkin_empty_exported_target.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/naichenzhao/Desktop/EECS106A_Project/ros_workspaces/build/CMakeFiles 0
+.PHONY : gantry/CMakeFiles/_catkin_empty_exported_target.dir/rule
+
+# Convenience name for target.
+_catkin_empty_exported_target: gantry/CMakeFiles/_catkin_empty_exported_target.dir/rule
+
+.PHONY : _catkin_empty_exported_target
+
+# clean rule for target.
+gantry/CMakeFiles/_catkin_empty_exported_target.dir/clean:
+	$(MAKE) -f gantry/CMakeFiles/_catkin_empty_exported_target.dir/build.make gantry/CMakeFiles/_catkin_empty_exported_target.dir/clean
+.PHONY : gantry/CMakeFiles/_catkin_empty_exported_target.dir/clean
 
 #=============================================================================
 # Special targets to cleanup operation of make.
