@@ -1,2 +1,2 @@
-comm_test:gantry
+comm_test:gantry:urdf_testfile
 -DCATKIN_DEVEL_PREFIX=/home/naichenzhao/Desktop/EECS106A_Project/ros_workspaces/devel -DCMAKE_INSTALL_PREFIX=/home/naichenzhao/Desktop/EECS106A_Project/ros_workspaces/install -G Unix Makefiles

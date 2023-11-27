@@ -1,0 +1,11 @@
+moveit_setup_assistant_config:
+  URDF:
+    package: gantry
+    relative_path: urdf/gantry.urdf
+    xacro_args: ""
+  SRDF:
+    relative_path: config/gantry.srdf
+  CONFIG:
+    author_name: God
+    author_email: god@gmail.com
+    generated_timestamp: 1701072646

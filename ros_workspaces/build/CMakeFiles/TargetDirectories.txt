@@ -35,6 +35,14 @@
 /home/naichenzhao/Desktop/EECS106A_Project/ros_workspaces/build/gtest/googletest/CMakeFiles/test.dir
 /home/naichenzhao/Desktop/EECS106A_Project/ros_workspaces/build/gtest/googletest/CMakeFiles/gtest_main.dir
 /home/naichenzhao/Desktop/EECS106A_Project/ros_workspaces/build/gtest/googletest/CMakeFiles/gtest.dir
+/home/naichenzhao/Desktop/EECS106A_Project/ros_workspaces/build/urdf_testfile/CMakeFiles/install/strip.dir
+/home/naichenzhao/Desktop/EECS106A_Project/ros_workspaces/build/urdf_testfile/CMakeFiles/install/local.dir
+/home/naichenzhao/Desktop/EECS106A_Project/ros_workspaces/build/urdf_testfile/CMakeFiles/install.dir
+/home/naichenzhao/Desktop/EECS106A_Project/ros_workspaces/build/urdf_testfile/CMakeFiles/list_install_components.dir
+/home/naichenzhao/Desktop/EECS106A_Project/ros_workspaces/build/urdf_testfile/CMakeFiles/rebuild_cache.dir
+/home/naichenzhao/Desktop/EECS106A_Project/ros_workspaces/build/urdf_testfile/CMakeFiles/edit_cache.dir
+/home/naichenzhao/Desktop/EECS106A_Project/ros_workspaces/build/urdf_testfile/CMakeFiles/test.dir
+/home/naichenzhao/Desktop/EECS106A_Project/ros_workspaces/build/urdf_testfile/CMakeFiles/_catkin_empty_exported_target.dir
 /home/naichenzhao/Desktop/EECS106A_Project/ros_workspaces/build/comm_test/CMakeFiles/rebuild_cache.dir
 /home/naichenzhao/Desktop/EECS106A_Project/ros_workspaces/build/comm_test/CMakeFiles/edit_cache.dir
 /home/naichenzhao/Desktop/EECS106A_Project/ros_workspaces/build/comm_test/CMakeFiles/test.dir
@@ -69,4 +77,3 @@
 /home/naichenzhao/Desktop/EECS106A_Project/ros_workspaces/build/gantry/CMakeFiles/rebuild_cache.dir
 /home/naichenzhao/Desktop/EECS106A_Project/ros_workspaces/build/gantry/CMakeFiles/edit_cache.dir
 /home/naichenzhao/Desktop/EECS106A_Project/ros_workspaces/build/gantry/CMakeFiles/test.dir
-/home/naichenzhao/Desktop/EECS106A_Project/ros_workspaces/build/gantry/CMakeFiles/_catkin_empty_exported_target.dir
