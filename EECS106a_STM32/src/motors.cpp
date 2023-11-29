@@ -35,15 +35,15 @@
 #define A2_HOME PB6
 
 // Max position to end at. This is set to stepper value of OL and encoder value for CL
-long MAX_POS[6] = {8000, 14000, 44000, 10000, 10000, 10000}; // Max step position for each motor
-const long MAX_SPEED[6] = {1000, 1000, 6000, 10000, 10000, 10000};
-const long MAX_ACCELERATION[6] = {1000, 1000, 5000, 5000, 5000, 5000};
+long MAX_POS[6] = {8000, 4000, 44000, 10000, 10000, 10000}; // Max step position for each motor
+const long MAX_SPEED[6] = {2000, 1500, 6000, 10000, 10000, 10000};
+const long MAX_ACCELERATION[6] = {2000, 1000, 5000, 5000, 5000, 5000};
 
 
 const int homing_step = 1000;
 const int homing_backoff_step = 1;
-const long HOME_SPEED[6] = {-5000, -4000, -1000, -1000, -1000, -1000};
-const long HOME_STEP[6] = {300, 300, 70, 70, 70, 70};
+const long HOME_SPEED[6] = {-700, -1200, -2000, -1000, -1000, -1000};
+const long HOME_STEP[6] = {130, 460, 100, 70, 70, 70};
 
 //  + -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- - +
 //  | Setup Steppers
@@ -83,7 +83,7 @@ encoder_pointer ENCODERS[6] = {
 //  + -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- - +
 //  | Setup Variables
 //  + -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- - +
-int MOVEMENT_MODE[6] = {1, 0, 1, 0, 0, 0}; // Movement type -> [0] for open loop, [1] for encoder PID
+int MOVEMENT_MODE[6] = {1, 1, 1, 0, 0, 0}; // Movement type -> [0] for open loop, [1] for encoder PID
 
 // Target position for motor to move towards
 int TARGET_POS[6] = {0, 0, 0, 0, 0, 0};
@@ -122,10 +122,11 @@ void homeMotors() {
     }
 
     homeSingleStepperEncoder(0);
-    reset_x();
     homeSingleStepperEncoder(1);
-    reset_y();
     homeSingleStepperEncoder(2);
+
+    reset_x();
+    reset_y();
     reset_z();
 
     // setup constant values for steppers
@@ -231,7 +232,7 @@ void runStepperCL(int num) {
         stepper->run();
     } else 
     
-    if (PID_val > 10 || PID_val < -10) { // Mpve towards the target
+    if ((PID_val > 10 || PID_val < -10) && (error_p > 0 || error_p < -0)) { // Mpve towards the target
         stepper->setSpeed(PID_val);
         stepper->run();
     } else { // This is for if we have reached it
@@ -279,23 +280,26 @@ void homeSingleStepperEncoder(int num) {
         for(int i = 0; i < HOME_STEP[num]; i++) {
             stepper->setSpeed(HOME_SPEED[num]);
             stepper->run();
-            delayMicroseconds(100);
+            delayMicroseconds(300);
         }
         curr_pos = ENCODERS[num]();
         encoder_diff = curr_pos - last_pos;
         last_pos = curr_pos;
-    } while (quick_abs(encoder_diff) >= 3);
 
-    stepper->stop();
+        // Serial.println(encoder_diff);
+    } while (encoder_diff < 0);
 
-    // Back off for a bit
-    for (int i = 0; i < HOME_STEP[num] * 10; i++) {
-        stepper->setSpeed(-HOME_SPEED[num]);
-        stepper->run();
-        delayMicroseconds(100);
-    }
     stepper->stop();
     stepper->setCurrentPosition(0);
+
+    // // Back off for a bit
+    // for (int i = 0; i < HOME_STEP[num] * 10; i++) {
+    //     stepper->setSpeed(-HOME_SPEED[num]);
+    //     stepper->run();
+    //     delayMicroseconds(100);
+    // }
+    // stepper->stop();
+    // stepper->setCurrentPosition(0);
 }
 
 long quick_abs(long value) {

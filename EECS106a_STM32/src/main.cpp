@@ -67,12 +67,19 @@ void loop() {
 
 
   // Everything should be printed in here as to not interfere with stepper motors
-  if (counter >= 10000) {
+  if (counter >= 20000) {
+    Serial.print("d");
     Serial.print(get_x());
-    Serial.print("   ");
+    Serial.print(" ");
     Serial.print(get_y());
-    Serial.print("   ");
-    Serial.println(get_z());
+    Serial.print(" ");
+    Serial.print(get_z());
+    Serial.print(" ");
+    Serial.print(get_r());
+    Serial.print(" ");
+    Serial.print(get_a1());
+    Serial.print(" ");
+    Serial.println(get_a2());
 
     counter = 0;
   }

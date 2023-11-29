@@ -17,21 +17,26 @@ def callback(message):
 
 # Define the method which contains the node's main functionality
 def listener():
-    rospy.Subscriber("cmd_pos", Int32MultiArray, callback)
-
-    # Wait till next message
-    rospy.spin()
+    rospy.Subscriber("joint_pos", Int32MultiArray, callback)
+    
+    while not rospy.is_shutdown():
+        if STM.isOpen():
+            read_val = str(STM.readline().decode('utf-8'))
+            if read_val != "":
+                pr_data = str(read_val[:-1])
+                print(pr_data)
+    
 
 
 if __name__ == '__main__':
-    rospy.init_node('listener', anonymous=True)
+    rospy.init_node('joint_Interface', anonymous=True)
 
     STM = None
 
     # Test different ports until one sticks. If not, rais an error
     for i in range(10):
         try:
-            STM = serial.Serial(port='/dev/ttyACM' + str(i), baudrate=115200, timeout=.1)
+            STM = serial.Serial(port='/dev/ttyACM' + str(i), baudrate=115200, timeout=1)
             print("connecting to STM32 on port: /dev/ttyACM"+ str(i))
             break
         except:
@@ -40,5 +45,12 @@ if __name__ == '__main__':
     
     if STM == None:
         raise Exception("Unable to detect STM32 controller")
-
+    
+    pub = rospy.Publisher('/status', String, queue_size=1000) 
+    
     listener()
+    
+    # while True:
+    #     cc=str(STM.readline())
+    #     print(cc)
+    

@@ -8,8 +8,8 @@
 #define X_A PA0
 #define X_B PA1
 
-#define Y_A PA4
-#define Y_B PB0
+#define Y_A PC10
+#define Y_B PC12
 
 #define Z_A PC1
 #define Z_B PC0
@@ -17,11 +17,11 @@
 #define R_A PC3
 #define R_B PC2
 
-#define A1_A PC15
-#define A1_B PC14
+#define A1_A PB3
+#define A1_B PB5
 
-#define A2_A PC13
-#define A2_B PC7
+#define A2_A PB3
+#define A2_B PA10
 
 volatile long X_COUNTER = 0;
 volatile long Y_COUNTER = 0;
@@ -44,6 +44,13 @@ void setupEncoders() {
     pinMode(R_A, INPUT_PULLDOWN);
     pinMode(A1_A, INPUT_PULLDOWN);
     pinMode(A2_A, INPUT_PULLDOWN);
+
+    pinMode(X_B, INPUT_PULLDOWN);
+    pinMode(Y_B, INPUT_PULLDOWN);
+    pinMode(Z_B, INPUT_PULLDOWN);
+    pinMode(R_B, INPUT_PULLDOWN);
+    pinMode(A1_B, INPUT_PULLDOWN);
+    pinMode(A2_B, INPUT_PULLDOWN);
 
     // Attach respective interrupts to each encoder
     attachInterrupt(digitalPinToInterrupt(X_A), pulseX, RISING);
