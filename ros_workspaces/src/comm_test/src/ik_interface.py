@@ -39,7 +39,7 @@ def callback(message):
             group.set_pose_target(request.ik_request.pose_stamped)
             
             plan = group.plan()
-            user_input = input("Enter 'y' if the trajectory looks safe on RVIZ")
+            user_input = input("Enter 'y' if the trajectory looks safe, 'n' to cancel: ")
 
             # If movement looks viable
             if user_input == 'y':
@@ -49,7 +49,8 @@ def callback(message):
                 send_data(scaled_values)
                 idle = True
                 break
-            
+            elif user_input == 'n':
+                break
         except rospy.ServiceException as e:
             print("SKILL ISSUE: %s"%e)
         
