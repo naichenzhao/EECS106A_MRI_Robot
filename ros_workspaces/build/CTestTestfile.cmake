@@ -5,6 +5,6 @@
 # This file includes the relevant testing commands required for 
 # testing this directory and lists subdirectories to be tested as well.
 subdirs("gtest")
-subdirs("gantry_controller")
+subdirs("controller")
 subdirs("comm_test")
 subdirs("gantry")

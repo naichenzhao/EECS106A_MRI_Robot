@@ -1,2 +1,2 @@
-comm_test:gantry:gantry_controller
+comm_test:controller:gantry
 -DCATKIN_DEVEL_PREFIX=/home/naichenzhao/Desktop/EECS106A_Project/ros_workspaces/devel -DCMAKE_INSTALL_PREFIX=/home/naichenzhao/Desktop/EECS106A_Project/ros_workspaces/install -G Unix Makefiles

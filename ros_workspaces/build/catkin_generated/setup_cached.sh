@@ -7,9 +7,4 @@
 # new environment variables
 
 # modified environment variables
-export CMAKE_PREFIX_PATH="/home/naichenzhao/Desktop/EECS106A_Project/ros_workspaces/devel:$CMAKE_PREFIX_PATH"
-export LD_LIBRARY_PATH="/home/naichenzhao/Desktop/EECS106A_Project/ros_workspaces/devel/lib:$LD_LIBRARY_PATH"
-export PKG_CONFIG_PATH="/home/naichenzhao/Desktop/EECS106A_Project/ros_workspaces/devel/lib/pkgconfig:$PKG_CONFIG_PATH"
 export PWD='/home/naichenzhao/Desktop/EECS106A_Project/ros_workspaces/build'
-export ROSLISP_PACKAGE_DIRECTORIES="/home/naichenzhao/Desktop/EECS106A_Project/ros_workspaces/devel/share/common-lisp:$ROSLISP_PACKAGE_DIRECTORIES"
-export ROS_PACKAGE_PATH="/home/naichenzhao/Desktop/EECS106A_Project/ros_workspaces/src:$ROS_PACKAGE_PATH"

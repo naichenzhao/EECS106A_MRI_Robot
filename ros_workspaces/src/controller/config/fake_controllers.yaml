@@ -1,0 +1,13 @@
+controller_list:
+  - name: fake_TMS_gantry_controller
+    type: $(arg fake_execution_type)
+    joints:
+      - x_Gantry
+      - Y_Gantry
+      - Z_Gantry
+      - R_Arm
+      - TMS_1
+      - TMS_HEAD
+initial:  # Define initial robot poses per group
+  - group: TMS_gantry
+    pose: home

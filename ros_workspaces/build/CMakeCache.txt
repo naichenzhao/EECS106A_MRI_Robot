@@ -403,6 +403,12 @@ comm_test_BINARY_DIR:STATIC=/home/naichenzhao/Desktop/EECS106A_Project/ros_works
 //Value Computed by CMake
 comm_test_SOURCE_DIR:STATIC=/home/naichenzhao/Desktop/EECS106A_Project/ros_workspaces/src/comm_test
 
+//Value Computed by CMake
+controller_BINARY_DIR:STATIC=/home/naichenzhao/Desktop/EECS106A_Project/ros_workspaces/build/controller
+
+//Value Computed by CMake
+controller_SOURCE_DIR:STATIC=/home/naichenzhao/Desktop/EECS106A_Project/ros_workspaces/src/controller
+
 //The directory containing a CMake configuration file for cpp_common.
 cpp_common_DIR:PATH=/opt/ros/noetic/share/cpp_common/cmake
 

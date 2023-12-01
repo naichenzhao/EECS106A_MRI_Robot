@@ -54,7 +54,7 @@ CMAKE_BINARY_DIR = /home/naichenzhao/Desktop/EECS106A_Project/ros_workspaces/bui
 
 # The main recursive "all" target.
 all: gtest/all
-all: gantry_controller/all
+all: controller/all
 all: comm_test/all
 all: gantry/all
 
@@ -62,7 +62,7 @@ all: gantry/all
 
 # The main recursive "preinstall" target.
 preinstall: gtest/preinstall
-preinstall: gantry_controller/preinstall
+preinstall: controller/preinstall
 preinstall: comm_test/preinstall
 preinstall: gantry/preinstall
 
@@ -75,7 +75,7 @@ clean: CMakeFiles/clean_test_results.dir/clean
 clean: CMakeFiles/tests.dir/clean
 clean: CMakeFiles/download_extra_data.dir/clean
 clean: gtest/clean
-clean: gantry_controller/clean
+clean: controller/clean
 clean: comm_test/clean
 clean: gantry/clean
 
@@ -119,6 +119,24 @@ comm_test/clean: comm_test/CMakeFiles/std_msgs_generate_messages_py.dir/clean
 .PHONY : comm_test/clean
 
 #=============================================================================
+# Directory level rules for directory controller
+
+# Recursive "all" directory target.
+controller/all:
+
+.PHONY : controller/all
+
+# Recursive "preinstall" directory target.
+controller/preinstall:
+
+.PHONY : controller/preinstall
+
+# Recursive "clean" directory target.
+controller/clean: controller/CMakeFiles/_catkin_empty_exported_target.dir/clean
+
+.PHONY : controller/clean
+
+#=============================================================================
 # Directory level rules for directory gantry
 
 # Recursive "all" directory target.
@@ -135,24 +153,6 @@ gantry/preinstall:
 gantry/clean:
 
 .PHONY : gantry/clean
-
-#=============================================================================
-# Directory level rules for directory gantry_controller
-
-# Recursive "all" directory target.
-gantry_controller/all:
-
-.PHONY : gantry_controller/all
-
-# Recursive "preinstall" directory target.
-gantry_controller/preinstall:
-
-.PHONY : gantry_controller/preinstall
-
-# Recursive "clean" directory target.
-gantry_controller/clean: gantry_controller/CMakeFiles/_catkin_empty_exported_target.dir/clean
-
-.PHONY : gantry_controller/clean
 
 #=============================================================================
 # Directory level rules for directory gtest
@@ -456,31 +456,31 @@ gtest/googletest/CMakeFiles/gtest.dir/clean:
 .PHONY : gtest/googletest/CMakeFiles/gtest.dir/clean
 
 #=============================================================================
-# Target rules for target gantry_controller/CMakeFiles/_catkin_empty_exported_target.dir
+# Target rules for target controller/CMakeFiles/_catkin_empty_exported_target.dir
 
 # All Build rule for target.
-gantry_controller/CMakeFiles/_catkin_empty_exported_target.dir/all:
-	$(MAKE) -f gantry_controller/CMakeFiles/_catkin_empty_exported_target.dir/build.make gantry_controller/CMakeFiles/_catkin_empty_exported_target.dir/depend
-	$(MAKE) -f gantry_controller/CMakeFiles/_catkin_empty_exported_target.dir/build.make gantry_controller/CMakeFiles/_catkin_empty_exported_target.dir/build
+controller/CMakeFiles/_catkin_empty_exported_target.dir/all:
+	$(MAKE) -f controller/CMakeFiles/_catkin_empty_exported_target.dir/build.make controller/CMakeFiles/_catkin_empty_exported_target.dir/depend
+	$(MAKE) -f controller/CMakeFiles/_catkin_empty_exported_target.dir/build.make controller/CMakeFiles/_catkin_empty_exported_target.dir/build
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/naichenzhao/Desktop/EECS106A_Project/ros_workspaces/build/CMakeFiles --progress-num= "Built target _catkin_empty_exported_target"
-.PHONY : gantry_controller/CMakeFiles/_catkin_empty_exported_target.dir/all
+.PHONY : controller/CMakeFiles/_catkin_empty_exported_target.dir/all
 
 # Build rule for subdir invocation for target.
-gantry_controller/CMakeFiles/_catkin_empty_exported_target.dir/rule: cmake_check_build_system
+controller/CMakeFiles/_catkin_empty_exported_target.dir/rule: cmake_check_build_system
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/naichenzhao/Desktop/EECS106A_Project/ros_workspaces/build/CMakeFiles 0
-	$(MAKE) -f CMakeFiles/Makefile2 gantry_controller/CMakeFiles/_catkin_empty_exported_target.dir/all
+	$(MAKE) -f CMakeFiles/Makefile2 controller/CMakeFiles/_catkin_empty_exported_target.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/naichenzhao/Desktop/EECS106A_Project/ros_workspaces/build/CMakeFiles 0
-.PHONY : gantry_controller/CMakeFiles/_catkin_empty_exported_target.dir/rule
+.PHONY : controller/CMakeFiles/_catkin_empty_exported_target.dir/rule
 
 # Convenience name for target.
-_catkin_empty_exported_target: gantry_controller/CMakeFiles/_catkin_empty_exported_target.dir/rule
+_catkin_empty_exported_target: controller/CMakeFiles/_catkin_empty_exported_target.dir/rule
 
 .PHONY : _catkin_empty_exported_target
 
 # clean rule for target.
-gantry_controller/CMakeFiles/_catkin_empty_exported_target.dir/clean:
-	$(MAKE) -f gantry_controller/CMakeFiles/_catkin_empty_exported_target.dir/build.make gantry_controller/CMakeFiles/_catkin_empty_exported_target.dir/clean
-.PHONY : gantry_controller/CMakeFiles/_catkin_empty_exported_target.dir/clean
+controller/CMakeFiles/_catkin_empty_exported_target.dir/clean:
+	$(MAKE) -f controller/CMakeFiles/_catkin_empty_exported_target.dir/build.make controller/CMakeFiles/_catkin_empty_exported_target.dir/clean
+.PHONY : controller/CMakeFiles/_catkin_empty_exported_target.dir/clean
 
 #=============================================================================
 # Target rules for target comm_test/CMakeFiles/rosgraph_msgs_generate_messages_nodejs.dir

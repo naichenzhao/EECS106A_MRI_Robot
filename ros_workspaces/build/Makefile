@@ -294,7 +294,7 @@ _catkin_empty_exported_target: cmake_check_build_system
 
 # fast build rule for target.
 _catkin_empty_exported_target/fast:
-	$(MAKE) -f gantry_controller/CMakeFiles/_catkin_empty_exported_target.dir/build.make gantry_controller/CMakeFiles/_catkin_empty_exported_target.dir/build
+	$(MAKE) -f controller/CMakeFiles/_catkin_empty_exported_target.dir/build.make controller/CMakeFiles/_catkin_empty_exported_target.dir/build
 .PHONY : _catkin_empty_exported_target/fast
 
 #=============================================================================
