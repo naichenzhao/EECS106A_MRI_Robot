@@ -11,8 +11,8 @@ from moveit_commander import MoveGroupCommander
 # Define global variables
 
 # Origins and limits from URDF file
-origins = np.array([0, 0, -0.03, 0, 0, 0])
-limits = np.array([-0.28, 0.16, 0.13, 6.28, 6.28, 6.28])
+origins = np.array([0, 0, 0, 0, 0, 0])
+limits = np.array([-0.3, 0.16, -0.137, 6.28, 6.28, 6.28])
 
 idle = True
 
@@ -22,7 +22,7 @@ def callback(message):
     global idle
     idle = False
     request = GetPositionIKRequest()
-    request.ik_request.group_name = "TMS_controller"
+    request.ik_request.group_name = "TMS_gantry"
     request.ik_request.pose_stamped.pose = message
 
     input('Press [ Enter ] to begin')
@@ -32,10 +32,11 @@ def callback(message):
             print(request)
             response = compute_ik(request)
             
-            print(response)
+            # print(response)
             joint_values = response.solution.joint_state.position
+            print("\nresponse:", joint_values)
             
-            group = MoveGroupCommander("TMS_controller")
+            group = MoveGroupCommander("TMS_gantry")
             group.set_pose_target(request.ik_request.pose_stamped)
             
             plan = group.plan()
@@ -98,7 +99,7 @@ if __name__ == '__main__':
     
     if STM == None:
         print("SKILL ISSUE")
-        raise Exception("Unable to detect STM32 controller")
+        # raise Exception("Unable to detect STM32 controller")
         
     # Create the function used to call the service
     compute_ik = rospy.ServiceProxy('compute_ik', GetPositionIK)
