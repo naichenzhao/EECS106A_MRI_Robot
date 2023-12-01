@@ -17,6 +17,7 @@ int counter = 0;
 //  | Global Functions
 //  + -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- - +
 void set_positions(String ser_read);
+void print_encoders();
 
 
 
@@ -68,19 +69,7 @@ void loop() {
 
   // Everything should be printed in here as to not interfere with stepper motors
   if (counter >= 20000) {
-    Serial.print("d");
-    Serial.print(get_x());
-    Serial.print(" ");
-    Serial.print(get_y());
-    Serial.print(" ");
-    Serial.print(get_z());
-    Serial.print(" ");
-    Serial.print(get_r());
-    Serial.print(" ");
-    Serial.print(get_a1());
-    Serial.print(" ");
-    Serial.println(get_a2());
-
+    print_encoders();
     counter = 0;
   }
   counter ++;
@@ -96,6 +85,16 @@ void loop() {
 //  + -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- - +
 //  | Any functions are listed below
 //  + -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- - +
+
+
+void print_encoders() {
+  Serial.print("d");
+  for (int i = 0; i < 6; i++) {
+    Serial.print(get_conv(i));
+    Serial.print(" ");
+  }
+  Serial.println("");
+}
 
 void set_positions(String ser_read) {
   // Convert the input into a char array

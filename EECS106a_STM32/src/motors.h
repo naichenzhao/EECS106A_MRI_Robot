@@ -23,5 +23,6 @@ void homeSingleStepperSwitch(int num, int switch_port);
 void homeSingleStepperEncoder(int num);
 
 long quick_abs(long value);
+long get_conv(int num);
 
 #endif

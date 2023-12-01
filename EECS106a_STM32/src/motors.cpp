@@ -42,8 +42,8 @@ const long MAX_ACCELERATION[6] = {2000, 1000, 5000, 5000, 5000, 5000};
 
 const int homing_step = 1000;
 const int homing_backoff_step = 1;
-const long HOME_SPEED[6] = {-700, -1500, -2000, -1000, -1000, -1000};
-const long HOME_STEP[6] = {130, 500, 100, 70, 70, 70};
+const long HOME_SPEED[6] = {-700, -2000, -2000, -1000, -1000, -1000};
+const long HOME_STEP[6] = {130, 600, 100, 70, 70, 70};
 
 //  + -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- - +
 //  | Setup Steppers
@@ -181,6 +181,13 @@ void run_motors() {
         else
             runStepperOL(i);
     }
+}
+
+
+
+long get_conv(int num) {
+    long raw_val = ENCODERS[num]();
+    return (10000 * raw_val) / MAX_POS[num];
 }
 
 

@@ -4,6 +4,7 @@ import rospy
 import numpy as np
 
 from moveit_msgs.srv import GetPositionIK, GetPositionIKRequest, GetPositionIKResponse
+from sensor_msgs.msg import JointState
 from geometry_msgs.msg import Pose
 from moveit_commander import MoveGroupCommander
 
@@ -11,16 +12,19 @@ from moveit_commander import MoveGroupCommander
 # Define global variables
 
 # Origins and limits from URDF file
-origins = np.array([0, 0, 0, 0, 0, 0])
 limits = np.array([-0.3, 0.16, -0.137, 6.28, 6.28, 6.28])
+pub = None
 
 idle = True
+simulated = False
 
 # Listener callback
 def callback(message):
     # Construct the request
     global idle
     idle = False
+    rospy.sleep(0.01)
+    
     request = GetPositionIKRequest()
     request.ik_request.group_name = "TMS_gantry"
     request.ik_request.pose_stamped.pose = message
@@ -29,7 +33,7 @@ def callback(message):
     while not rospy.is_shutdown():
         try:
             # Send the request to the service
-            print(request)
+            # print(request)
             response = compute_ik(request)
             
             # print(response)
@@ -43,12 +47,18 @@ def callback(message):
             user_input = input("Enter 'y' if the trajectory looks safe, 'n' to cancel: ")
 
             # If movement looks viable
-            if user_input == 'y':
+            if joint_values == []:
+                print("IK Solve failed")
+            elif user_input == 'y':
                 raw_values = np.array(response.solution.joint_state.position)
                 print("raw values: ", raw_values)
-                scaled_values = convert_values(raw_values).tolist()
-                send_data(scaled_values)
+                if simulated:
+                    push_states(joint_values)
+                else:
+                    scaled_values = convert_values(raw_values).tolist()
+                    send_data(scaled_values)
                 idle = True
+                print("Completed Movement\n")
                 break
             elif user_input == 'n':
                 break
@@ -57,20 +67,37 @@ def callback(message):
         
         
 def listener():
+    global pub
     rospy.Subscriber("gantry_pose", Pose, callback)
     
     
-    # while not rospy.is_shutdown():
-    #     if STM.isOpen() and idle:
-    #         read_val = str(STM.readline().decode('utf-8'))
-    #         if read_val != "":
-    #             pr_data = str(read_val[:-1])
-    #             print(pr_data)
-    rospy.spin()
+    while not rospy.is_shutdown():
+        # Read Data
+        if not simulated and STM.isOpen() and idle:
+            read_val = str(STM.readline().decode('utf-8'))
+            if read_val != "" and read_val[0] == 'd':
+                pr_data = str(read_val[1:-3])
+                print(pr_data.split(" "))
+                try:
+                    encoder_angles = np.array([int(i) for i in pr_data.split(" ")])
+                    push_states(deconv_values(encoder_angles))
+                except:
+                    print("failed split")
+
+
+def push_states(angles):
+    js = JointState()
+    js.header.stamp = rospy.Time.now()
+    js.name = ["x_Gantry", "Y_Gantry", "Z_Gantry", "R_Arm", "TMS_1", "TMS_HEAD"]
+    js.position = angles
+    pub.publish(js)
     
     
 def convert_values(joint_values):  
-    return np.around(10000 * (joint_values - origins)/limits, 0)
+    return np.around(10000 * joint_values/limits, 0)
+
+def deconv_values(encoder_angles):  
+    return (encoder_angles/10000) * limits
     
     
 def send_data(joints):
@@ -84,6 +111,7 @@ def send_data(joints):
 if __name__ == '__main__':    
     # Wait for the IK service to become available
     rospy.wait_for_service('compute_ik')
+    pub = rospy.Publisher('joint_states', JointState, queue_size=10)
     rospy.init_node('ik_service_query')
     
     STM = None
@@ -98,7 +126,8 @@ if __name__ == '__main__':
             print("     retrying on a different port...")        
     
     if STM == None:
-        print("SKILL ISSUE")
+        print("\nAssuming we are simulating the arm")
+        simulated = True
         # raise Exception("Unable to detect STM32 controller")
         
     # Create the function used to call the service
