@@ -1,1 +1,1 @@
-controller_joint_names: ['', 'X_gantry', 'Y_gantry', 'Z_gantry', 'R_arm', 'TMS_1', 'TMS_HEAD', ]
+controller_joint_names: ['', 'x_Gantry', 'Y_Gantry', 'Z_Gantry', 'R_Arm', 'TMS_1', 'TMS_HEAD', ]
