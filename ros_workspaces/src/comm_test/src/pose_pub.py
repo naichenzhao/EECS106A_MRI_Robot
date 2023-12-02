@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 import rospy
 from geometry_msgs.msg import *
+import numpy as np
+from scipy.spatial.transform import Rotation as R
 
 def publisher():
     pub = rospy.Publisher('gantry_pose', Pose, queue_size=10)
@@ -27,13 +29,15 @@ def usr_input(pub):
     print("     max: [1.019, 0.2167, 0.2452]")
     print("     min: [0.7196, 0.3847, 0.3802]")
     usr_pos = input("Please insert the position:   ")
-    usr_quat = input("Please insert the orientation. Leave blank for default:   ")
+    usr_quat = input("Please insert the orientation (rpy). Leave blank for default:   ")
     
     pos = [float(i) for i in usr_pos.split(", ")]
-    if len(usr_quat) < 3:
+    if len(usr_quat) < 2:
         quat = [0, 1, 0, 0]
     else:
-        quat = [float(i) for i in usr_quat.split(", ")]
+        euler = [float(i) * (np.pi/180) for i in usr_quat.split(", ")]
+        r = R.from_rotvec(euler)
+        quat = r.as_quat()
     print(pos, quat)
     msg = gen_pose(pos, quat)
     pub.publish(msg)

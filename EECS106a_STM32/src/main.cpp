@@ -62,14 +62,13 @@ void loop() {
     // Confirm revieved values
     Serial.print("recievd: ");
     Serial.println(ind);
-
-    // set_x_motor(10000);
   }
 
 
   // Everything should be printed in here as to not interfere with stepper motors
   if (counter >= 20000) {
     print_encoders();
+    // Serial.println(digitalRead(PC4));
     counter = 0;
   }
   counter ++;

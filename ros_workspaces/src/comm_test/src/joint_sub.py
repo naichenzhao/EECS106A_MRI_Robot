@@ -46,8 +46,6 @@ if __name__ == '__main__':
     if STM == None:
         raise Exception("Unable to detect STM32 controller")
     
-    pub = rospy.Publisher('/status', String, queue_size=1000) 
-    
     listener()
     
     # while True:

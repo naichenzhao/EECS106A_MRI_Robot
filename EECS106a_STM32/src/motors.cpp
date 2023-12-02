@@ -35,15 +35,15 @@
 #define A2_HOME PB6
 
 // Max position to end at. This is set to stepper value of OL and encoder value for CL
-long MAX_POS[6] = {8000, 4000, 44000, 10000, 10000, 10000}; // Max step position for each motor
-const long MAX_SPEED[6] = {2000, 1500, 6000, 10000, 10000, 10000};
-const long MAX_ACCELERATION[6] = {2000, 1000, 5000, 5000, 5000, 5000};
+long MAX_POS[6] = {8000, 1000, 44000, 12568, 10000, 10000}; // Max step position for each motor
+const long MAX_SPEED[6] = {700, 700, 3000, 3000, 5000, 5000};
+const long MAX_ACCELERATION[6] = {1000, 1000, 2000, 2000, 2000, 2000};
 
 
-const int homing_step = 1000;
+const int homing_step = 10000;
 const int homing_backoff_step = 1;
-const long HOME_SPEED[6] = {-700, -2000, -2000, -1000, -1000, -1000};
-const long HOME_STEP[6] = {130, 600, 100, 70, 70, 70};
+const long HOME_SPEED[6] = {-700, -700, -2000, 4000, -1000, -1000};
+const long HOME_STEP[6] = {130, 300, 100, 0, 70, 70};
 
 //  + -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- - +
 //  | Setup Steppers
@@ -83,7 +83,7 @@ encoder_pointer ENCODERS[6] = {
 //  + -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- - +
 //  | Setup Variables
 //  + -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- - +
-int MOVEMENT_MODE[6] = {1, 1, 1, 0, 0, 0}; // Movement type -> [0] for open loop, [1] for encoder PID
+int MOVEMENT_MODE[6] = {1, 1, 1, 1, 0, 0}; // Movement type -> [0] for open loop, [1] for encoder PID
 
 // Target position for motor to move towards
 int TARGET_POS[6] = {0, 0, 0, 0, 0, 0};
@@ -93,9 +93,9 @@ long last_times[6] = {0, 0, 0, 0, 0, 0};
 long last_positions[6] = {0, 0, 0, 0, 0, 0};
 float error_i[6] = {0, 0, 0, 0, 0, 0};
 
-float Kp[6] = {2, 2, 2, 2, 2, 2};
-float Ki[6] = {0.5, 0.5, 0.5, 0.5, 0.5, 0.5};
-float Kd[6] = {0.1, 0.1, 0.1, 0.1, 0.1, 0.1};
+float Kp[6] = {2, 2, 2, 3, 2, 2};
+float Ki[6] = {0.5, 0.5, 0.5, 1, 0.5, 0.5};
+float Kd[6] = {0.1, 0.1, 0.1, 1, 0.1, 0.1};
 
 float Kw = 0.9;
 
@@ -107,33 +107,39 @@ float Kw = 0.9;
 
 void setupMotors() {
     // set input for all homing pins
-    pinMode(X_HOME, INPUT);
-    pinMode(Y_HOME, INPUT);
-    pinMode(Z_HOME, INPUT);
-    pinMode(R_HOME, INPUT);
-    pinMode(A1_HOME, INPUT);
-    pinMode(A2_HOME, INPUT);
+    pinMode(X_HOME, INPUT_PULLDOWN);
+    pinMode(Y_HOME, INPUT_PULLDOWN);
+    pinMode(Z_HOME, INPUT_PULLDOWN);
+    pinMode(R_HOME, INPUT_PULLDOWN);
+    pinMode(A1_HOME, INPUT_PULLDOWN);
+    pinMode(A2_HOME, INPUT_PULLDOWN);
 }
 
 void homeMotors() {
     for (int i = 0; i < 6; i++) {
-        STEPPERS[i]->setMaxSpeed(MAX_SPEED[i]);
+        STEPPERS[i]->setMaxSpeed(HOME_SPEED[i]);
         STEPPERS[i]->setAcceleration(MAX_ACCELERATION[i]);
     }
 
     homeSingleStepperEncoder(0);
     homeSingleStepperEncoder(1);
     homeSingleStepperEncoder(2);
-
     reset_x();
     reset_y();
     reset_z();
 
+    motor_goto(3, -30000);
+    homeSingleStepperSwitch(3, R_HOME);
+    delay(150);
+    motor_goto(3, 2000);
+    reset_r();
     // setup constant values for steppers
-    for (int i = 0; i < 6; i++) {
+    for (int i = 0; i < 6; i++)
+    {
         STEPPERS[i]->setMaxSpeed(MAX_SPEED[i] + 1000);
         STEPPERS[i]->setAcceleration(MAX_ACCELERATION[i]);
     }
+    
 }
 
 void set_motors(long positions[]) {
@@ -173,6 +179,16 @@ void set_a2_motor(int pos) {
     error_i[5] = 0;
 }
 
+void motor_goto(int num, int target) {
+    AccelStepper *stepper = STEPPERS[num];
+    stepper->moveTo(target);
+
+    while (stepper->currentPosition()  != target) {
+        stepper->run();
+    }
+    stepper->stop();
+}
+
 
 void run_motors() {
     for (int i = 0; i < 6; i++) {
@@ -190,7 +206,10 @@ long get_conv(int num) {
     return (10000 * raw_val) / MAX_POS[num];
 }
 
-
+void get_val(int num) {
+    AccelStepper *stepper = STEPPERS[num];
+    Serial.println(stepper->currentPosition());
+}
 
 //  + -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- - +
 //  | Motor Movement
@@ -258,18 +277,26 @@ void runStepperCL(int num) {
 void homeSingleStepperSwitch(int num, int switch_port){
     AccelStepper *stepper = STEPPERS[num];
     // AccelStepper *stepper = &z_stepper;
-    while (!digitalRead(switch_port)) {
-        stepper->moveTo(stepper->currentPosition() - homing_step);
+    int counter = 0;
+    while (counter < 10) {
+        stepper->setSpeed(HOME_SPEED[num]);
         stepper->run();
-        delay(5);
+        delay(1);
+        if (digitalRead(switch_port)) {
+            counter ++;
+        } else {
+            counter = 0;
+        }
     }
+    Serial.println("Found Switch 1");
     stepper->stop();
 
     while (digitalRead(switch_port)) {
-        stepper->moveTo(stepper->currentPosition() + homing_backoff_step);
+        stepper->setSpeed(-HOME_SPEED[num]/10);
         stepper->run();
         delay(1);
     }
+    Serial.println("Found Switch 2");
     stepper->stop();
     stepper->setCurrentPosition(0);
 }

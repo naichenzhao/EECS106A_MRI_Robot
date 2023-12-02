@@ -24,5 +24,7 @@ void homeSingleStepperEncoder(int num);
 
 long quick_abs(long value);
 long get_conv(int num);
+void get_val(int num);
+void motor_goto(int num, int target);
 
 #endif

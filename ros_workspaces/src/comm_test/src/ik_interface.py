@@ -12,7 +12,7 @@ from moveit_commander import MoveGroupCommander
 # Define global variables
 
 # Origins and limits from URDF file
-limits = np.array([-0.3, 0.16, -0.137, 6.28, 6.28, 6.28])
+limits = np.array([-0.3, 0.16, -0.137, -3.14, 6.28, 6.28])
 pub = None
 
 idle = True
@@ -23,20 +23,23 @@ def callback(message):
     # Construct the request
     global idle
     idle = False
-    rospy.sleep(0.01)
+    rospy.sleep(0.1)
     
     request = GetPositionIKRequest()
     request.ik_request.group_name = "TMS_gantry"
+    request.ik_request.pose_stamped.header.frame_id = "base_link"
+    request.ik_request.ik_link_name = "TMS_HEAD_Link"
     request.ik_request.pose_stamped.pose = message
+    
 
     input('Press [ Enter ] to begin')
     while not rospy.is_shutdown():
         try:
             # Send the request to the service
-            # print(request)
+            print(request)
             response = compute_ik(request)
             
-            # print(response)
+            print(response)
             joint_values = response.solution.joint_state.position
             print("\nresponse:", joint_values)
             
@@ -47,7 +50,7 @@ def callback(message):
             user_input = input("Enter 'y' if the trajectory looks safe, 'n' to cancel: ")
 
             # If movement looks viable
-            if joint_values == []:
+            if joint_values == None:
                 print("IK Solve failed")
             elif user_input == 'y':
                 raw_values = np.array(response.solution.joint_state.position)
@@ -77,7 +80,7 @@ def listener():
             read_val = str(STM.readline().decode('utf-8'))
             if read_val != "" and read_val[0] == 'd':
                 pr_data = str(read_val[1:-3])
-                print(pr_data.split(" "))
+                # print(pr_data.split(" "))
                 try:
                     encoder_angles = np.array([int(i) for i in pr_data.split(" ")])
                     push_states(deconv_values(encoder_angles))

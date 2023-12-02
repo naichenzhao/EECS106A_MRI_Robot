@@ -5,19 +5,19 @@
 //  | Define ports for encoders
 //  + -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- - +
 
-#define X_A PA0
-#define X_B PA1
+#define X_A PA0 //PA0
+#define X_B PA1//PA1
 
-#define Y_A PC10
-#define Y_B PC12
+#define Y_A PC10 //PC10
+#define Y_B PC12 //PC12
 
 #define Z_A PC1
 #define Z_B PC0
 
-#define R_A PC3
-#define R_B PC2
+#define R_A PC2
+#define R_B PC3
 
-#define A1_A PB3
+#define A1_A PB4
 #define A1_B PB5
 
 #define A2_A PB3
