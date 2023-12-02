@@ -23,7 +23,7 @@ def callback(message):
     # Construct the request
     global idle
     idle = False
-    rospy.sleep(0.1)
+    rospy.sleep(0.5)
     
     request = GetPositionIKRequest()
     request.ik_request.group_name = "TMS_gantry"
@@ -36,23 +36,24 @@ def callback(message):
     while not rospy.is_shutdown():
         try:
             # Send the request to the service
-            print(request)
+            # print(request)
             response = compute_ik(request)
             
-            print(response)
+            # print(response)
             joint_values = response.solution.joint_state.position
             print("\nresponse:", joint_values)
             
             group = MoveGroupCommander("TMS_gantry")
             group.set_pose_target(request.ik_request.pose_stamped)
             
-            plan = group.plan()
+            if response.error_code:
+                print("IK Solve failed. Exiting Solver\n")
+                break
+            
             user_input = input("Enter 'y' if the trajectory looks safe, 'n' to cancel: ")
 
             # If movement looks viable
-            if joint_values == None:
-                print("IK Solve failed")
-            elif user_input == 'y':
+            if user_input == 'y':
                 raw_values = np.array(response.solution.joint_state.position)
                 print("raw values: ", raw_values)
                 if simulated:
@@ -60,13 +61,14 @@ def callback(message):
                 else:
                     scaled_values = convert_values(raw_values).tolist()
                     send_data(scaled_values)
-                idle = True
                 print("Completed Movement\n")
                 break
             elif user_input == 'n':
+                print("Cancelled Movement\n")
                 break
         except rospy.ServiceException as e:
             print("SKILL ISSUE: %s"%e)
+    idle = True
         
         
 def listener():
@@ -80,7 +82,7 @@ def listener():
             read_val = str(STM.readline().decode('utf-8'))
             if read_val != "" and read_val[0] == 'd':
                 pr_data = str(read_val[1:-3])
-                # print(pr_data.split(" "))
+                print(pr_data.split(" "))
                 try:
                     encoder_angles = np.array([int(i) for i in pr_data.split(" ")])
                     push_states(deconv_values(encoder_angles))
