@@ -1,0 +1,7 @@
+scipy
+PyQt5
+matplotlib
+trimesh
+numpy
+nptyping
+numpy-stl
