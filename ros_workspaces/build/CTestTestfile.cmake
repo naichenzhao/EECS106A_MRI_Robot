@@ -6,5 +6,7 @@
 # testing this directory and lists subdirectories to be tested as well.
 subdirs("gtest")
 subdirs("controller")
+subdirs("head_gui")
 subdirs("comm_test")
+subdirs("planner")
 subdirs("gantry")

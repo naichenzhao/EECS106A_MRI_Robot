@@ -12,14 +12,17 @@ def publisher():
         print(usr_input)
 
         input_split_cs = [int(i) for i in usr_input.split(", ")]
+        input_split = [input_split_cs[0], input_split_cs[1], input_split_cs[2], input_split_cs[3], 0, 0]
+        input_split[4] = int((-input_split_cs[4] + input_split_cs[5])/2)
+        input_split[5] = int((input_split_cs[4] + input_split_cs[5])/2)
 
-        if (not len(input_split_cs) == 6):
+        if (not len(input_split) == 6):
             print("Input is not of length 6, Please try again")
             continue
 
         msg = Int32MultiArray()
         
-        msg.data = input_split_cs
+        msg.data = input_split
         pub.publish(msg)
         print("Message Send: \n",  msg)
         

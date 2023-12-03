@@ -12,7 +12,8 @@ from moveit_commander import MoveGroupCommander
 # Define global variables
 
 # Origins and limits from URDF file
-limits = np.array([-0.3, 0.16, -0.137, -3.14, 6.28, 6.28])
+limits = np.array([-0.3, 0.16, -0.137, -3.14, -3.14, -3.14])
+refs = np.array([0, 0, 0, 0, 0, 0])
 pub = None
 
 idle = True
@@ -26,6 +27,7 @@ def callback(message):
     rospy.sleep(0.5)
     
     request = GetPositionIKRequest()
+    request.ik_request.avoid_collisions = True
     request.ik_request.group_name = "TMS_gantry"
     request.ik_request.pose_stamped.header.frame_id = "base_link"
     request.ik_request.ik_link_name = "TMS_HEAD_Link"
@@ -46,7 +48,7 @@ def callback(message):
             group = MoveGroupCommander("TMS_gantry")
             group.set_pose_target(request.ik_request.pose_stamped)
             
-            if response.error_code:
+            if response.error_code.val < 0:
                 print("IK Solve failed. Exiting Solver\n")
                 break
             
@@ -59,7 +61,7 @@ def callback(message):
                 if simulated:
                     push_states(joint_values)
                 else:
-                    scaled_values = convert_values(raw_values).tolist()
+                    scaled_values = convert_values(raw_values)
                     send_data(scaled_values)
                 print("Completed Movement\n")
                 break
@@ -82,7 +84,7 @@ def listener():
             read_val = str(STM.readline().decode('utf-8'))
             if read_val != "" and read_val[0] == 'd':
                 pr_data = str(read_val[1:-3])
-                print(pr_data.split(" "))
+                # print(pr_data.split(" "))
                 try:
                     encoder_angles = np.array([int(i) for i in pr_data.split(" ")])
                     push_states(deconv_values(encoder_angles))
@@ -95,14 +97,23 @@ def push_states(angles):
     js.header.stamp = rospy.Time.now()
     js.name = ["x_Gantry", "Y_Gantry", "Z_Gantry", "R_Arm", "TMS_1", "TMS_HEAD"]
     js.position = angles
+    # print(angles)
     pub.publish(js)
     
     
 def convert_values(joint_values):  
-    return np.around(10000 * joint_values/limits, 0)
+    angles = np.around(10000 * (joint_values + refs)/limits, 0)
+    joints = [angles[0], angles[1], angles[2], angles[3], 0, 0]
+    joints[4] = int((-angles[4] + angles[5])/2) % 10000
+    joints[5] = int((angles[4] + angles[5])/2) % 10000
+    return joints
 
 def deconv_values(encoder_angles):  
-    return (encoder_angles/10000) * limits
+    joints = ((encoder_angles/10000) * limits) - refs
+    angles = [joints[0], joints[1], joints[2], joints[3], 0, 0]
+    angles[4] = (-joints[4] + joints[5])
+    angles[5] = (joints[4] + joints[5])
+    return angles
     
     
 def send_data(joints):

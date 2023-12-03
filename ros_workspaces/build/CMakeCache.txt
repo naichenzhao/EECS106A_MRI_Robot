@@ -424,6 +424,24 @@ gantry_controller_BINARY_DIR:STATIC=/home/naichenzhao/Desktop/EECS106A_Project/r
 //Value Computed by CMake
 gantry_controller_SOURCE_DIR:STATIC=/home/naichenzhao/Desktop/EECS106A_Project/ros_workspaces/src/gantry_controller
 
+//The directory containing a CMake configuration file for gencpp.
+gencpp_DIR:PATH=/opt/ros/noetic/share/gencpp/cmake
+
+//The directory containing a CMake configuration file for geneus.
+geneus_DIR:PATH=/opt/ros/noetic/share/geneus/cmake
+
+//The directory containing a CMake configuration file for genlisp.
+genlisp_DIR:PATH=/opt/ros/noetic/share/genlisp/cmake
+
+//The directory containing a CMake configuration file for genmsg.
+genmsg_DIR:PATH=/opt/ros/noetic/share/genmsg/cmake
+
+//The directory containing a CMake configuration file for gennodejs.
+gennodejs_DIR:PATH=/opt/ros/noetic/share/gennodejs/cmake
+
+//The directory containing a CMake configuration file for genpy.
+genpy_DIR:PATH=/opt/ros/noetic/share/genpy/cmake
+
 //The directory containing a CMake configuration file for geometry_msgs.
 geometry_msgs_DIR:PATH=/opt/ros/noetic/share/geometry_msgs/cmake
 
@@ -473,11 +491,26 @@ gtest_hide_internal_symbols:BOOL=OFF
 //Dependencies for the target
 gtest_main_LIB_DEPENDS:STATIC=general;gtest;
 
+//Value Computed by CMake
+head_gui_BINARY_DIR:STATIC=/home/naichenzhao/Desktop/EECS106A_Project/ros_workspaces/build/head_gui
+
+//Value Computed by CMake
+head_gui_SOURCE_DIR:STATIC=/home/naichenzhao/Desktop/EECS106A_Project/ros_workspaces/src/head_gui
+
 //Path to a library.
-lib:FILEPATH=/opt/ros/noetic/lib/libxmlrpcpp.so
+lib:FILEPATH=/opt/ros/noetic/lib/librostime.so
+
+//The directory containing a CMake configuration file for message_generation.
+message_generation_DIR:PATH=/opt/ros/noetic/share/message_generation/cmake
 
 //The directory containing a CMake configuration file for message_runtime.
 message_runtime_DIR:PATH=/opt/ros/noetic/share/message_runtime/cmake
+
+//Value Computed by CMake
+planner_BINARY_DIR:STATIC=/home/naichenzhao/Desktop/EECS106A_Project/ros_workspaces/build/planner
+
+//Value Computed by CMake
+planner_SOURCE_DIR:STATIC=/home/naichenzhao/Desktop/EECS106A_Project/ros_workspaces/src/planner
 
 //The directory containing a CMake configuration file for rosconsole.
 rosconsole_DIR:PATH=/opt/ros/noetic/share/rosconsole/cmake
@@ -666,7 +699,7 @@ CMAKE_MODULE_LINKER_FLAGS_RELWITHDEBINFO-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_NM
 CMAKE_NM-ADVANCED:INTERNAL=1
 //number of local generators
-CMAKE_NUMBER_OF_MAKEFILES:INTERNAL=7
+CMAKE_NUMBER_OF_MAKEFILES:INTERNAL=9
 //ADVANCED property for variable: CMAKE_OBJCOPY
 CMAKE_OBJCOPY-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_OBJDUMP

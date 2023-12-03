@@ -21,10 +21,12 @@ void runStepperCL(int num);
 
 void homeSingleStepperSwitch(int num, int switch_port);
 void homeSingleStepperEncoder(int num);
+void homeDifferentialEncoder();
 
 long quick_abs(long value);
 long get_conv(int num);
-void get_val(int num);
+long get_val(int num);
 void motor_goto(int num, int target);
+void dgear_goto(int target1, int target2);
 
 #endif

@@ -27,6 +27,7 @@ void print_encoders();
 void setup() {
   Serial.begin(115200);
   Serial.println("---- Starting Setup ---- ");
+  delay(500);
 
   setupMotors(); // Setup stepper motors
   setupEncoders(); // setup encoders
@@ -68,7 +69,6 @@ void loop() {
   // Everything should be printed in here as to not interfere with stepper motors
   if (counter >= 20000) {
     print_encoders();
-    // Serial.println(digitalRead(PC4));
     counter = 0;
   }
   counter ++;

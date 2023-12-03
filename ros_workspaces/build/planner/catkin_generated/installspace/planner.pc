@@ -1,0 +1,8 @@
+prefix=/home/naichenzhao/Desktop/EECS106A_Project/ros_workspaces/install
+
+Name: planner
+Description: Description of planner
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 
