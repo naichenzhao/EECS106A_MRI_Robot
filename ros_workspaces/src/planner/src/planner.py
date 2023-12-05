@@ -11,6 +11,8 @@ from skspatial.plotting import plot_3d
 from tf2_geometry_msgs import do_transform_pose
 
 from moveit_msgs.srv import GetPositionIK, GetPositionIKRequest, GetPositionIKResponse
+from moveit_msgs.msg import RobotTrajectory
+from trajectory_msgs.msg import JointTrajectoryPoint
 from sensor_msgs.msg import JointState
 from geometry_msgs.msg import Pose, PoseArray
 from std_msgs.msg import Float32MultiArray
@@ -19,55 +21,147 @@ from visualization_msgs.msg import Marker
 from planner_utils import *
 
 # radius for path circle
-PATH_RAD = 0.12
+PATH_RAD = 0.15
 
 # center point for path circle
-ORIGIN = np.array([0.89, 0.3007, 0.24])
+ORIGIN = np.array([0.88, 0.3007, 0.23])
 
 # (aproximate) bounding box for reachable locations
 UPPER_BOUNDS = np.array([1.019, 0.2167, 0.2452])
 LOWER_BOUNDS = np.array([0.7196, 0.3847, 0.3802])
 REF_SPHERE = Sphere(ORIGIN, PATH_RAD)
 
-pub = None
+PRINT_PATH = True
+LIMIT = 8
+
+posePub = None
+jointPub = None
 
 # Listener callback
 def callback(message):
     print("recieved message...")
     # Calculate target
     target = message.data
+    print("Planning path...")
+    path = path_plan(target)
+    
+    print("Generating trajectory...")
+    generate_trajectory(path)
+    
+    
+
+    
+    
+    
+
+# |-------------------------------------------------------------|
+#   We check if the path is viable and generate a trajectory
+# |-------------------------------------------------------------|
+def generate_trajectory(path):
+    
+    # Run Ik solutions on the points
+    ik_solutions = []
+    for curr in path: 
+        ik_point = solve_pose(curr)
+        if ik_point != None:
+            ik_solutions.append(ik_point)
+    
+    if len(path) - len(ik_solutions) > LIMIT:
+        raise Exception("Number of dropped points less than limit")
+    
+    trajectory = trajectory_builder(ik_solutions)
+    jointPub.publish(trajectory)
+    print("Completed Path Generation")
+    
+    
+    
+    
+            
+
+def solve_pose(target):
+    request = GetPositionIKRequest()
+    request.ik_request.group_name = "TMS_gantry"
+    # request.ik_request.avoid_collisions = True
+    request.ik_request.pose_stamped.header.frame_id = "world"
+    request.ik_request.ik_link_name = "TMS_HEAD_Link"
+    request.ik_request.pose_stamped.pose = target
+    
+    fail_count = 0
+    # Send the request to the service
+    while True:
+        response = compute_ik(request)
+        
+        if fail_count > 10:
+            print("[NOTICE:] Point dropped")
+            print("Target:", target)
+            return None
+        
+        # We will give it 10 retries to make sure it works. Or else we fail it
+        if response.error_code.val < 0:
+            fail_count += 1
+            continue
+        else:
+            break 
+    # print(response)
+    joint_values = response.solution.joint_state.position
+    return joint_values
+
+    
+def trajectory_builder(joint_angles):
+    traj = RobotTrajectory()
+    traj.joint_trajectory.header.stamp = rospy.Time.now()
+    traj.joint_trajectory.header.frame_id = "world"
+    traj.joint_trajectory.joint_names = ["x_Gantry", "Y_Gantry", "Z_Gantry", "R_Arm", "TMS_1", "TMS_HEAD"]
+    
+    for curr_pos in joint_angles:
+        curr_point = JointTrajectoryPoint()
+        curr_point.positions = curr_pos
+        
+        traj.joint_trajectory.points.append(curr_point)
+
+    return traj
+    
+    
+
+# |-------------------------------------------------------------|
+#   For path plan, we plan out the points we want to go through
+# |-------------------------------------------------------------|
+def path_plan(target):
     target_pnt = target[0:3]
     target_vec = target[3:6]
     
-    
     try:
         # Calculate current position
-        curr_transform = tfBuffer.lookup_transform("world", "TMS_HEAD_Link", rospy.Time(), rospy.Duration(0.1))
-        # print(curr_transform)
+        curr_transform = tfBuffer.lookup_transform("base_link", "TMS_HEAD_Link", rospy.Time(), rospy.Duration(0.1))
+        print("found a tf value")
         curr_pnt, curr_vec = transform_to_vec(curr_transform)
     except:
         print("cant find transform, using home")
         curr_pnt = LOWER_BOUNDS
         curr_vec = [0, -1, 0]
+        
     
-    points, vectors = calclate_path(target_pnt, target_vec, curr_pnt, curr_vec)
+    points, vectors = calclate_points(target_pnt, target_vec, curr_pnt, curr_vec)
     joined = np.vstack((points.T, vectors.T)).T
-    # print("joined:\n", joined)
     
-    print("Displaying planned path")
-    print_path(points, vectors)
+    if PRINT_PATH:
+        print("Displaying planned path. Close the window to confirm")
+        print_path(joined)
     
+    # Calculate poses of the points
     path = convert_poses(joined)
+    
+    # Publish calculated path to rviz
     msg = PoseArray()
     msg.header.frame_id = "world"
     msg.header.stamp = rospy.Time.now()
     msg.poses = path[1:]
-    print("publishing pose")
-    pub.publish(msg) 
-    
+    posePub.publish(msg) 
+        
+    return path
     
 
-def calclate_path(target_pnt, target_vec, curr_pnt, curr_vec):
+def calclate_points(target_pnt, target_vec, curr_pnt, curr_vec):
     target_line = Line(target_pnt, target_vec)
     curr_line = Line(curr_pnt, curr_vec)
     
@@ -83,13 +177,19 @@ def calclate_path(target_pnt, target_vec, curr_pnt, curr_vec):
         new_line = Line(bounded_pnt, (curr_pnt - ORIGIN))
         curr_a, curr_b = REF_SPHERE.intersect_line(new_line)
         
-    target_inter = pick_point(target_a, target_b)
-    curr_inter = pick_point(curr_a, curr_b)
+    target_inter = pick_point(target_a, target_b, target_pnt)
+    curr_inter = pick_point(curr_a, curr_b, curr_pnt)
     
     # create path
-    len1, vec1 = get_path_linear(curr_pnt, curr_inter, res = 4)
-    len2, vec2 = get_path_circular(curr_inter, target_inter, origin = ORIGIN, res = 10)
-    len3, vec3 = get_path_linear(target_inter, target_pnt, res = 4)
+    len1, vec1 = get_path_linear(curr_inter, curr_pnt, res = 2)
+    len2, vec2 = get_path_circular(curr_inter, target_inter, origin = ORIGIN, res = 2)
+    len3, vec3 = get_path_linear(target_inter, target_pnt, res = 2)
+
+    if vec1[0][0] > 0:
+        vec1 = -1 * np.array(vec1)
+    
+    if vec3[0][0] > 0:
+        vec3 = -1 * np.array(vec3)
     
     points = np.concatenate((len1, len2, len3))
     vectors = np.concatenate((vec1, vec2, vec3))
@@ -113,14 +213,16 @@ def convert_poses(vecs):
         poses.append(p) 
     return poses
 
-def print_path(points, vectors):
+def print_path(joined):
     # create figure
     fig = plt.figure(figsize = (10, 7))
     ax = plt.axes(projection ="3d") 
     
+    points = joined[:, 0:3]
+    vectors = joined[:, 3:6]
+    
     # create reference shapes
     plot_sphere(ax, PATH_RAD, center = ORIGIN)
-    plot_cube(ax, LOWER_BOUNDS, UPPER_BOUNDS)
 
     # Plot path
     ax.scatter3D(points[:, 0], points[:, 1], points[:, 2], color = "green" )
@@ -146,46 +248,28 @@ def bound_point(pnt):
     return np.array([new_x, new_y, new_z])
 
 def listener():
-    global pub
-    pub = rospy.Publisher('TMS_path', PoseArray, queue_size=10)
-    sphere_pub = rospy.Publisher('sphere_marker', Marker, queue_size=10)
-    bounds_pub = rospy.Publisher('bounds_marker', Marker, queue_size=10)
-    rospy.Subscriber("head_target", Float32MultiArray, callback)
+    global posePub
+    global jointPub
+    
+    jointPub = rospy.Publisher('TMS/trajectory', RobotTrajectory, queue_size=10) 
+    posePub = rospy.Publisher('TMS/path', PoseArray, queue_size=10)
+    sphere_pub = rospy.Publisher('TMS/sphere_marker', Marker, queue_size=10)
+    rospy.Subscriber("TMS/head_target", Float32MultiArray, callback)
     
     rate = rospy.Rate(5)
     while not rospy.is_shutdown():
         sphere_pub.publish(gen_sphere())
       
-def gen_sphere():
-    m = Marker() 
-    m.type = 2  
-    m.header.frame_id = "world"
-        
-    m.color.r = 255
-    m.color.g = 255
-    m.color.b = 255
-    m.color.a = 0.5
-        
-    m.pose.position.x = ORIGIN[0]
-    m.pose.position.y = ORIGIN[1]
-    m.pose.position.z = ORIGIN[2]
-        
-    m.pose.orientation.x = 0
-    m.pose.orientation.y = 1
-    m.pose.orientation.z = 0
-    m.pose.orientation.w = 0
-        
-    m.scale.x =PATH_RAD * 2
-    m.scale.y =PATH_RAD * 2
-    m.scale.z =PATH_RAD * 2
-    
-    return m
+
         
 if __name__ == '__main__':
-    print("target_publisher starting up...")
-    rospy.init_node('target_publisher', anonymous=True)
+    print("path_planner starting up...")
+    rospy.wait_for_service('compute_ik')
+    rospy.init_node('Path_Planner')
     
     tfBuffer = tf2_ros.Buffer()## initialize a buffer
     tfListener = tf2_ros.TransformListener(tfBuffer)## initialize a tf listener
+    compute_ik = rospy.ServiceProxy('compute_ik', GetPositionIK)
+    
     print("planner ready")
     listener()

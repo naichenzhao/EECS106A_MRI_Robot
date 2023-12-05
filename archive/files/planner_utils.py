@@ -1,8 +1,7 @@
 import numpy as np
-from planner import PATH_RAD, ORIGIN
+from planner import PATH_RAD
 from scipy.spatial.transform import Rotation as R
 from tf.transformations import quaternion_from_euler
-from visualization_msgs.msg import Marker
 
 def get_path_circular(p1, p2, origin = [0, 0, 0], res = 20):
     initial = get_angles(p1, origin)
@@ -21,12 +20,10 @@ def get_path_circular(p1, p2, origin = [0, 0, 0], res = 20):
         points[j, 2] = radius[j] * np.cos(phi[j]) + origin[2]
         
         vecs[j, 0] = (points[j, 0] - origin[0])
-        vecs[j, 1] = 0 #(points[j, 1] - origin[1])
-        vecs[j, 2] = 0 #(points[j, 2] - origin[2])
+        vecs[j, 1] = (points[j, 1] - origin[1])
+        vecs[j, 2] = (points[j, 2] - origin[2])
         
     return points, vecs
-
-
 
 def get_path_linear(p1, p2, res = 5):
     points = np.zeros((res, 3))
@@ -36,7 +33,6 @@ def get_path_linear(p1, p2, res = 5):
     
     vecs = [(p1 - p2)/ np.linalg.norm(p1 - p2)] * res
     return points, vecs
-
 
 
 def get_angles(p, center):
@@ -53,67 +49,35 @@ def get_angles(p, center):
     return(r, theta, phi)
 
 
-
-def pick_point(p1, p2, v):
-    len1 = np.linalg.norm(np.array(p1) - np.array(v))
-    len2 = np.linalg.norm(np.array(p2) - np.array(v))
-    if len1 < len2:
+def pick_point(p1, p2):
+    if p1[0] > 0 and abs(p1[1]) < PATH_RAD and p1[2] > 0:
         return p1
     return p2
 
 
-
 def get_rollpitch(v1): 
-    yaw = min(max(-np.pi - np.arcsin(v1[1]/np.linalg.norm(v1)), -np.pi), np.pi)
-    pitch =  min(max((-np.pi/2) - np.arcsin(v1[2]/np.linalg.norm(v1)), -np.pi), np.pi)
+    yaw = np.pi - np.arcsin(v1[1]/np.linalg.norm(v1))
+    pitch =  (-np.pi/2) - np.arcsin(v1[2]/np.linalg.norm(v1))
     
     return yaw, pitch
 
 
-
 def vect_to_quat(v):
     yaw, pitch = get_rollpitch(v)
-    return quaternion_from_euler(0 - np.pi/2, pitch + np.pi/2, yaw + np.pi/2)
-
+    return quaternion_from_euler(0, pitch, yaw)
 
 
 def transform_to_vec(tf):
-    v2 = np.array([0, 0, 1])
+    v2 = np.array([0, 1, 0])
     
     pnt = [tf.transform.translation.x, tf.transform.translation.y, tf.transform.translation.z]
     quat = [tf.transform.rotation.x, tf.transform.rotation.y, 
             tf.transform.rotation.z, tf.transform.rotation.w]
     r = R.from_quat(quat)
-    vec = - r.as_matrix() @ v2
+    vec = r.as_matrix() @ v2
     
     return pnt, vec
- 
- 
         
-def gen_sphere():
-    m = Marker() 
-    m.type = 2  
-    m.header.frame_id = "world"
-        
-    m.color.r = 255
-    m.color.g = 255
-    m.color.b = 255
-    m.color.a = 0.5
-        
-    m.pose.position.x = ORIGIN[0]
-    m.pose.position.y = ORIGIN[1]
-    m.pose.position.z = ORIGIN[2]
-        
-    m.pose.orientation.x = 0
-    m.pose.orientation.y = 1
-    m.pose.orientation.z = 0
-    m.pose.orientation.w = 0
-        
-    m.scale.x =PATH_RAD * 2
-    m.scale.y =PATH_RAD * 2
-    m.scale.z =PATH_RAD * 2
-    
-    return m    
     
     
 
@@ -122,10 +86,8 @@ def plot_vec(ax, p, v, colour = "red" ):
     vals = np.zeros((2, 3))
     vals[0] = p
     vals[1] = p + (v * 0.01)/ np.linalg.norm(v)
-    # ax.scatter3D(p[0], p[1], p[2], color = colour )
+    ax.scatter3D(p[0], p[1], p[2], color = colour )
     ax.plot(vals[:, 0], vals[:, 1], vals[:, 2], color = colour )
-
-
 
 def plot_sphere(ax, r, center = [0, 0, 0], colour = "blue"):
     u, v = np.mgrid[-np.pi/2:np.pi/2:20j, 0:-np.pi/2:10j]
@@ -134,3 +96,27 @@ def plot_sphere(ax, r, center = [0, 0, 0], colour = "blue"):
     z = r * np.cos(v) + center[2]
     ax.plot_surface(x, y, z, color=colour, alpha = 0.5)
     
+def plot_cube(ax, p1, p2):
+    vertices = [
+            [p1[0], p1[1], p1[2]],
+            [p2[0], p1[1], p1[2]],
+            [p2[0], p2[1], p1[2]],
+            [p1[0], p2[1], p1[2]],
+            [p1[0], p1[1], p2[2]],
+            [p2[0], p1[1], p2[2]],
+            [p2[0], p2[1], p2[2]],
+            [p1[0], p2[1], p2[2]]
+    ]
+    # Define cube edges
+    edges = [
+        [0, 1], [1, 2], [2, 3], [3, 0],
+        [4, 5], [5, 6], [6, 7], [7, 4],
+        [0, 4], [1, 5], [2, 6], [3, 7]
+    ]
+ 
+    # Plot the cube
+    for edge in edges:
+        x = [vertices[edge[0]][0], vertices[edge[1]][0]]
+        y = [vertices[edge[0]][1], vertices[edge[1]][1]]
+        z = [vertices[edge[0]][2], vertices[edge[1]][2]]
+        ax.plot(x, y, z, 'y--', alpha = 0.5)

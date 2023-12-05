@@ -40,7 +40,7 @@
 
 // Max position to end at. This is set to stepper value of OL and encoder value for CL
 // long MAX_POS[6] = {8000, 1000, 44000, 12568, 50000, 50000}; // Max step position for each motor
-long MAX_POS[6] = {8000, 1100, 44000, 160000, 52000, 52000}; // Max step position for each motor
+long MAX_POS[6] = {8000, 1150, 44000, 160000, 52000, 52000}; // Max step position for each motor
 const long MAX_SPEED[6] = {700, 600, 3000, 5000, 1500, 1500};
 const long MAX_ACCELERATION[6] = {40000, 40000, 40000, 40000, 40000, 40000};
 
@@ -134,7 +134,7 @@ void homeMotors() {
     motor_goto(3, -30000);
     homeSingleStepperSwitch(3, R_HOME);
     delay(150);
-    motor_goto(3, 2000);
+    motor_goto(3, 4000);
     r_stepper.setCurrentPosition(0);
     reset_r();
 

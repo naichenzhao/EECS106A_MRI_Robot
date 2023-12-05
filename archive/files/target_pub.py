@@ -8,7 +8,7 @@ from geometry_msgs.msg import Pose, PoseArray
 from std_msgs.msg import Float32MultiArray
 
 def publisher():
-    pub = rospy.Publisher('TMS/head_target', Float32MultiArray, queue_size=10)
+    pub = rospy.Publisher('head_target', Float32MultiArray, queue_size=10)
     r = rospy.Rate(10)
     
     print("== STARTING TARGET_PUBLISHER == ")

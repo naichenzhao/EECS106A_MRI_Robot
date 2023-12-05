@@ -5,10 +5,8 @@ Panels:
     Property Tree Widget:
       Expanded:
         - /MotionPlanning1/Planned Path1
-        - /Marker1/Status1
-        - /PoseArray1
       Splitter Ratio: 0.5
-    Tree Height: 467
+    Tree Height: 239
   - Class: rviz/Help
     Name: Help
   - Class: rviz/Views
@@ -214,7 +212,7 @@ Visualization Manager:
         Z_Gantry_Link:
           Value: false
         base_link:
-          Value: false
+          Value: true
         world:
           Value: false
       Marker Alpha: 1
@@ -234,6 +232,31 @@ Visualization Manager:
                       TMS_HEAD_Link:
                         {}
       Update Interval: 0
+      Value: true
+    - Class: rviz/Marker
+      Enabled: true
+      Marker Topic: /TMS/sphere_marker
+      Name: Marker
+      Namespaces:
+        "": true
+      Queue Size: 100
+      Value: true
+    - Alpha: 1
+      Arrow Length: 0.30000001192092896
+      Axes Length: 0.05000000074505806
+      Axes Radius: 0.004999999888241291
+      Class: rviz/PoseArray
+      Color: 255; 25; 0
+      Enabled: true
+      Head Length: 0.07000000029802322
+      Head Radius: 0.029999999329447746
+      Name: PoseArray
+      Queue Size: 10
+      Shaft Length: 0.23000000417232513
+      Shaft Radius: 0.009999999776482582
+      Shape: Axes
+      Topic: /TMS/path
+      Unreliable: false
       Value: true
     - Class: moveit_rviz_plugin/Trajectory
       Color Enabled: false
@@ -293,55 +316,6 @@ Visualization Manager:
       Trajectory Topic: move_group/display_planned_path
       Use Sim Time: false
       Value: true
-    - Class: rviz/Marker
-      Enabled: true
-      Marker Topic: /sphere_marker
-      Name: Marker
-      Namespaces:
-        "": true
-      Queue Size: 100
-      Value: true
-    - Alpha: 1
-      Buffer Length: 1
-      Class: rviz/Path
-      Color: 25; 255; 0
-      Enabled: true
-      Head Diameter: 0.30000001192092896
-      Head Length: 0.20000000298023224
-      Length: 0.30000001192092896
-      Line Style: Lines
-      Line Width: 0.029999999329447746
-      Name: Path
-      Offset:
-        X: 0
-        Y: 0
-        Z: 0
-      Pose Color: 255; 85; 255
-      Pose Style: None
-      Queue Size: 10
-      Radius: 0.029999999329447746
-      Shaft Diameter: 0.10000000149011612
-      Shaft Length: 0.10000000149011612
-      Topic: ""
-      Unreliable: false
-      Value: true
-    - Alpha: 1
-      Arrow Length: 0.30000001192092896
-      Axes Length: 0.05000000074505806
-      Axes Radius: 0.004999999888241291
-      Class: rviz/PoseArray
-      Color: 255; 25; 0
-      Enabled: true
-      Head Length: 0.07000000029802322
-      Head Radius: 0.029999999329447746
-      Name: PoseArray
-      Queue Size: 10
-      Shaft Length: 0.23000000417232513
-      Shaft Radius: 0.009999999776482582
-      Shape: Axes
-      Topic: /TMS_path
-      Unreliable: false
-      Value: true
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
@@ -358,7 +332,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 1.5762662887573242
+      Distance: 0.6577680706977844
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -366,35 +340,35 @@ Visualization Manager:
         Value: false
       Field of View: 0.75
       Focal Point:
-        X: 0.8472177386283875
-        Y: 0.2778514623641968
-        Z: 0.23932573199272156
+        X: 0.8366475701332092
+        Y: 0.2924504578113556
+        Z: 0.2646097242832184
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.8147960901260376
+      Pitch: 0.5747963786125183
       Target Frame: base_link
-      Yaw: 1.0599795579910278
+      Yaw: 0.3481968641281128
     Saved: ~
 Window Geometry:
   Displays:
-    collapsed: false
-  Height: 1016
+    collapsed: true
+  Height: 834
   Help:
     collapsed: false
-  Hide Left Dock: false
+  Hide Left Dock: true
   Hide Right Dock: false
   MotionPlanning:
-    collapsed: false
+    collapsed: true
   MotionPlanning - Trajectory Slider:
     collapsed: false
-  QMainWindow State: 000000ff00000000fd0000000100000000000002920000039efc0200000008fb000000100044006900730070006c006100790073010000003d00000210000000c900fffffffb0000000800480065006c00700000000342000000bb0000006e00fffffffb0000000a00560069006500770073000000010c000000a4000000a400fffffffb0000000c00430061006d00650072006100000002ff000001610000000000000000fb0000001e004d006f00740069006f006e00200050006c0061006e006e0069006e00670100000374000001890000000000000000fb00000044004d006f00740069006f006e0050006c0061006e006e0069006e00670020002d0020005400720061006a006500630074006f0072007900200053006c00690064006500720000000000ffffffff0000001600000016fb0000001c004d006f00740069006f006e0050006c0061006e006e0069006e00670100000253000001880000017d00fffffffb000000280020002d0020005400720061006a006500630074006f0072007900200053006c00690064006500720000000000ffffffff0000004100ffffff000004a00000039e00000001000000020000000100000002fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
-  Trajectory - Slider:
+  QMainWindow State: 000000ff00000000fd0000000100000000000001f3000002e8fc020000000afb000000100044006900730070006c006100790073000000003d0000012c000000c900fffffffb0000000800480065006c00700000000342000000bb0000006e00fffffffb0000000a00560069006500770073000000010c000000a4000000a400fffffffb0000000c00430061006d00650072006100000002ff000001610000000000000000fb0000001e004d006f00740069006f006e00200050006c0061006e006e0069006e00670100000374000001890000000000000000fb00000044004d006f00740069006f006e0050006c0061006e006e0069006e00670020002d0020005400720061006a006500630074006f0072007900200053006c00690064006500720000000000ffffffff0000001600000016fb0000001c004d006f00740069006f006e0050006c0061006e006e0069006e0067000000016f000001b60000017d00fffffffb000000280020002d0020005400720061006a006500630074006f0072007900200053006c00690064006500720000000000ffffffff0000000000000000fb0000003c005400720061006a006500630074006f007200790020002d0020005400720061006a006500630074006f0072007900200053006c00690064006500720000000000ffffffff0000001600000016fb000000280020002d0020005400720061006a006500630074006f0072007900200053006c00690064006500720000000000ffffffff0000000000000000000004f6000002e800000001000000020000000100000002fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
+  Trajectory - Trajectory Slider:
     collapsed: false
   Views:
     collapsed: false
-  Width: 1848
-  X: 72
+  Width: 1270
+  X: 90
   Y: 27
