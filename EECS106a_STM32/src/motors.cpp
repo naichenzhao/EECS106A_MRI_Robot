@@ -157,6 +157,8 @@ void homeMotors() {
         STEPPERS[i]->setMaxSpeed(MAX_SPEED[i] + 1000);
         STEPPERS[i]->setAcceleration(MAX_ACCELERATION[i]);
     }
+
+    set_y_motor(5000);
 }
 
 void set_motors(long positions[]) {

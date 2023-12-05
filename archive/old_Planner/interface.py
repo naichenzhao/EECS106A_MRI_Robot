@@ -24,7 +24,7 @@ pub = None
 idle = True
 simulated = False
 
-LIMIT = 500
+LIMIT = 1000
 
 # Listener callback
 def callback(message):
@@ -33,7 +33,6 @@ def callback(message):
 
     usrin = input('Press [ Enter ] to begin, [n] to exit]')
     if usrin == 'n':
-        idle = True
         return
     print("Executing Path")
     
@@ -44,12 +43,8 @@ def callback(message):
           
 def operate_path(trajectory):
     waypoints = trajectory.joint_trajectory.points
-    for i in range(4):
-        movegroup(waypoints[i].positions)
-        
-    input('Press [ Enter ] to return')
-    for i in range(4):
-        movegroup(waypoints[i + 3].positions)
+    for current_target in waypoints:
+        movegroup(current_target.positions)
         
     
 # Move robot to a certain point
@@ -60,6 +55,7 @@ def movegroup(current_target):
         time.sleep(1)
     
     while not simulated:
+        send_pose(current_target)
         read_val = str(STM.readline().decode('utf-8'))
         encoder_angles = parse_input(read_val)
             
@@ -70,6 +66,8 @@ def movegroup(current_target):
             if refval < LIMIT:
                 print("Reached Waypoint!")
                 break
+            else:
+                print(refval)
 
 
 def send_pose(joint_values):
@@ -105,9 +103,6 @@ def parse_input(read_val):
         except:
             print("failed split")
     return []
-
-
-
 
 def push_states(angles):
     js = JointState()

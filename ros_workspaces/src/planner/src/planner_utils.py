@@ -3,39 +3,49 @@ from planner import PATH_RAD, ORIGIN
 from scipy.spatial.transform import Rotation as R
 from tf.transformations import quaternion_from_euler
 from visualization_msgs.msg import Marker
+from skspatial.objects import Line, Sphere
+from geometry_msgs.msg import Pose
+from geometry_msgs.msg import Quaternion
 
-def get_path_circular(p1, p2, origin = [0, 0, 0], res = 20):
-    initial = get_angles(p1, origin)
-    final = get_angles(p2, origin)
-    
-    radius = np.linspace(initial[0], final[0], res)
-    theta = np.linspace(initial[1], final[1], res)
-    phi = np.linspace(initial[2], final[2], res)
-    
-    points = np.zeros((res, 3))
-    vecs = np.zeros((res, 3))
-    
-    for j in range(res):
-        points[j, 0] = radius[j] * np.cos(theta[j]) * np.sin(phi[j]) + origin[0]
-        points[j, 1] = radius[j] * np.sin(theta[j]) * np.sin(phi[j]) + origin[1]
-        points[j, 2] = radius[j] * np.cos(phi[j]) + origin[2]
+
+def get_intercept(pos, vec):
+    target_line = Line(pos, vec)
+    ref_sphere = Sphere(ORIGIN, PATH_RAD)
+
+    target_a, target_b = ref_sphere.intersect_line(target_line)
+    return pick_point(target_a, target_b)
+
+def pick_point(p1, p2):
+    if (p1[0] - ORIGIN[0]) > 0 and abs((p1[1] - ORIGIN[1])) < PATH_RAD and (p1[2] - ORIGIN[2]) > 0:
+        return p1
+    return p2   
+
+def convert_poses(pos, vec):
+    quat = vect_to_quat(vec)
+    p = Pose()
+    p.position.x = pos[0]
+    p.position.y = pos[1]
+    p.position.z = pos[2]
         
-        vecs[j, 0] = (points[j, 0] - origin[0])
-        vecs[j, 1] = 0 #(points[j, 1] - origin[1])
-        vecs[j, 2] = 0 #(points[j, 2] - origin[2])
-        
-    return points, vecs
+    p.orientation.x = quat[0]
+    p.orientation.y = quat[1]
+    p.orientation.z = quat[2]
+    p.orientation.w = quat[3]
+    
+    return p
+
+
 
 
 
 def get_path_linear(p1, p2, res = 5):
-    points = np.zeros((res, 3))
-    points[:, 0] = np.linspace(p1[0], p2[0], res)
-    points[:, 1] = np.linspace(p1[1], p2[1], res)
-    points[:, 2] = np.linspace(p1[2], p2[2], res)
+    points = np.zeros((res+1, 3))
+    points[:, 0] = np.linspace(p1[0], p2[0], res+1)
+    points[:, 1] = np.linspace(p1[1], p2[1], res+1)
+    points[:, 2] = np.linspace(p1[2], p2[2], res+1)
     
-    vecs = [(p1 - p2)/ np.linalg.norm(p1 - p2)] * res
-    return points, vecs
+    vecs = [(p1 - p2)/ np.linalg.norm(p1 - p2)] * (res+1)
+    return points[1:], vecs[1:]
 
 
 
@@ -53,27 +63,18 @@ def get_angles(p, center):
     return(r, theta, phi)
 
 
-
-def pick_point(p1, p2, v):
-    len1 = np.linalg.norm(np.array(p1) - np.array(v))
-    len2 = np.linalg.norm(np.array(p2) - np.array(v))
-    if len1 < len2:
-        return p1
-    return p2
-
-
-
-def get_rollpitch(v1): 
-    yaw = min(max(-np.pi - np.arcsin(v1[1]/np.linalg.norm(v1)), -np.pi), np.pi)
-    pitch =  min(max((-np.pi/2) - np.arcsin(v1[2]/np.linalg.norm(v1)), -np.pi), np.pi)
-    
-    return yaw, pitch
+def get_rpy(v1): 
+    roll = np.pi/2
+    pitch = np.arcsin(v1[1]/np.linalg.norm(v1))
+    yaw = np.pi/2-np.arctan2(v1[0]/np.linalg.norm(v1), v1[2]/np.linalg.norm(v1)) 
+    return roll, pitch, yaw
 
 
 
 def vect_to_quat(v):
-    yaw, pitch = get_rollpitch(v)
-    return quaternion_from_euler(0 - np.pi/2, pitch + np.pi/2, yaw + np.pi/2)
+    roll, pitch, yaw = get_rpy(v)
+    # return quaternion_from_euler(0 - np.pi/2, pitch + np.pi/2, yaw + np.pi/2)
+    return quaternion_from_euler(yaw, pitch, roll)
 
 
 
@@ -115,22 +116,4 @@ def gen_sphere():
     
     return m    
     
-    
-
-# Plotting Functions 
-def plot_vec(ax, p, v, colour = "red" ):
-    vals = np.zeros((2, 3))
-    vals[0] = p
-    vals[1] = p + (v * 0.01)/ np.linalg.norm(v)
-    # ax.scatter3D(p[0], p[1], p[2], color = colour )
-    ax.plot(vals[:, 0], vals[:, 1], vals[:, 2], color = colour )
-
-
-
-def plot_sphere(ax, r, center = [0, 0, 0], colour = "blue"):
-    u, v = np.mgrid[-np.pi/2:np.pi/2:20j, 0:-np.pi/2:10j]
-    x = r * np.cos(u)*np.sin(v) + center[0]
-    y = r * np.sin(u)*np.sin(v) + center[1]
-    z = r * np.cos(v) + center[2]
-    ax.plot_surface(x, y, z, color=colour, alpha = 0.5)
-    
+   
