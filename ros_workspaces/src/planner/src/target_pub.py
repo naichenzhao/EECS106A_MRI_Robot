@@ -18,22 +18,25 @@ def publisher():
 
 
 def usr_targets(pub):
-    usr_pos = input("Please insert the position:   ")
-    usr_vec = input("Please insert the tangent vector:   ")
+    usr_input = input("Please insert the target:   ")
     
     try:
-        pos = np.array([float(i) for i in usr_pos.split(", ")])
-        vec = np.array([float(i) for i in usr_vec.split(", ")])
+        vals = np.array([float(i) for i in usr_input.split(", ")])
+        pos = vals[0:3]
+        vec = vals[3:6]
+        print(pos)
+        print(vec)
+        
+        msg = Float32MultiArray()
+        
+        
+        msg.data = np.concatenate((pos, vec)).tolist()
+    
+        print("Message Send:",  msg, "\n")
+        pub.publish(msg) 
     except:
         print("invalid input. continuing...")
-    
-    msg = Float32MultiArray()
-    print(pos)
-    print(vec)
-    msg.data = np.concatenate((pos, vec)).tolist()
-    
-    print("Message Send:",  msg, "\n")
-    pub.publish(msg) 
+        
 
 
 if __name__ == '__main__':

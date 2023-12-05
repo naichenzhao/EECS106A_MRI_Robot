@@ -2,12 +2,7 @@
 
   <!-- specify the planning pipeline -->
   <arg name="pipeline" default="ompl" />
-
-  <!-- By default, we do not start a database (it can be large) -->
-  <arg name="db" default="false" />
-  <!-- Allow user to specify database location -->
-  <arg name="db_path" default="$(find controller)/default_warehouse_mongo_db" />
-
+  
   <!-- By default, we are not in debug mode -->
   <arg name="debug" default="false" />
 
@@ -25,6 +20,11 @@
 
   <!-- If needed, broadcast static tf for robot root -->
   <node pkg="tf2_ros" type="static_transform_publisher" name="virtual_joint_broadcaster_0" args="0 0 0 0 0 0 world base_link" />
+  <node pkg="tf2_py" type="transform_broadcaster" name="virtual_joint_broadcaster_1" args="base_link x_Gantry_Link" />
+  <node pkg="tf2_py" type="transform_broadcaster" name="virtual_joint_broadcaster_2" args="x_Gantry_Link Y_Gantry_Link" />
+  <node pkg="tf2_py" type="transform_broadcaster" name="virtual_joint_broadcaster_3" args="Y_Gantry_Link Z_Gantry_Link" />
+  <node pkg="tf2_py" type="transform_broadcaster" name="virtual_joint_broadcaster_4" args="Z_Gantry_Link TMS_1_Link" />
+  <node pkg="tf2_py" type="transform_broadcaster" name="virtual_joint_broadcaster_5" args="TMS_1_Link TMS_HEAD_LINK" />
 
   <group if="$(eval arg('moveit_controller_manager') == 'fake')">
     <!-- We do not have a real robot connected, so publish fake joint states via a joint_state_publisher
@@ -42,6 +42,14 @@
     <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" respawn="true" output="screen" />
   </group>
 
+     <!-- Load the urdf into the parameter server. -->
+   <param name="my_robot_description" textfile="$(find gantry)/urdf/gantry.urdf"/>
+    
+   <node pkg="robot_state_publisher" type="robot_state_publisher" name="rob_st_pub" >
+      <remap from="robot_description" to="my_robot_description" />
+      <remap from="joint_states" to="different_joint_states" />
+    </node>
+
   <!-- Run the main MoveIt executable without trajectory execution (we do not have controllers configured by default) -->
   <include file="$(dirname)/move_group.launch">
     <arg name="allow_trajectory_execution" value="true"/>
@@ -58,10 +66,4 @@
     <arg name="rviz_config" value="$(dirname)/moveit.rviz"/>
     <arg name="debug" value="$(arg debug)"/>
   </include>
-
-  <!-- If database loading was enabled, start mongodb as well -->
-  <include file="$(dirname)/default_warehouse_db.launch" if="$(arg db)">
-    <arg name="moveit_warehouse_database_path" value="$(arg db_path)"/>
-  </include>
-
 </launch>

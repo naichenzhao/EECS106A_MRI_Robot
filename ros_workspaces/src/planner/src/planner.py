@@ -14,14 +14,15 @@ from moveit_msgs.srv import GetPositionIK, GetPositionIKRequest, GetPositionIKRe
 from sensor_msgs.msg import JointState
 from geometry_msgs.msg import Pose, PoseArray
 from std_msgs.msg import Float32MultiArray
+from visualization_msgs.msg import Marker
 
 from planner_utils import *
 
 # radius for path circle
-PATH_RAD = 0.08
+PATH_RAD = 0.12
 
 # center point for path circle
-ORIGIN = np.array([0.8693, 0.3007, 0.28])
+ORIGIN = np.array([0.89, 0.3007, 0.24])
 
 # (aproximate) bounding box for reachable locations
 UPPER_BOUNDS = np.array([1.019, 0.2167, 0.2452])
@@ -39,21 +40,28 @@ def callback(message):
     target_vec = target[3:6]
     
     
-    # Calculate current position
-    curr_transform = tfBuffer.lookup_transform("TMS_HEAD_Link", "base_link", rospy.Time(), rospy.Duration(10))
-    # print(curr_transform)
-    curr_pnt, curr_vec = transform_to_vec(curr_transform)
+    try:
+        # Calculate current position
+        curr_transform = tfBuffer.lookup_transform("world", "TMS_HEAD_Link", rospy.Time(), rospy.Duration(0.1))
+        # print(curr_transform)
+        curr_pnt, curr_vec = transform_to_vec(curr_transform)
+    except:
+        print("cant find transform, using home")
+        curr_pnt = LOWER_BOUNDS
+        curr_vec = [0, -1, 0]
     
     points, vectors = calclate_path(target_pnt, target_vec, curr_pnt, curr_vec)
     joined = np.vstack((points.T, vectors.T)).T
     # print("joined:\n", joined)
     
     print("Displaying planned path")
-    # print_path(points, vectors)
+    print_path(points, vectors)
     
     path = convert_poses(joined)
     msg = PoseArray()
-    msg.poses = path
+    msg.header.frame_id = "world"
+    msg.header.stamp = rospy.Time.now()
+    msg.poses = path[1:]
     print("publishing pose")
     pub.publish(msg) 
     
@@ -79,20 +87,20 @@ def calclate_path(target_pnt, target_vec, curr_pnt, curr_vec):
     curr_inter = pick_point(curr_a, curr_b)
     
     # create path
-    len1, vec1 = get_path_linear(curr_pnt, curr_inter, res = 2)
-    len2, vec2 = get_path_circular(curr_inter, target_inter, origin = ORIGIN, res = 6)
-    len3, vec3 = get_path_linear(target_inter, target_pnt, res = 2)
+    len1, vec1 = get_path_linear(curr_pnt, curr_inter, res = 4)
+    len2, vec2 = get_path_circular(curr_inter, target_inter, origin = ORIGIN, res = 10)
+    len3, vec3 = get_path_linear(target_inter, target_pnt, res = 4)
     
     points = np.concatenate((len1, len2, len3))
     vectors = np.concatenate((vec1, vec2, vec3))
     
     return points, vectors
 
-# TODO: Add so it that it alos calculates the quaternion
 def convert_poses(vecs):
     poses = []
     quat = [0, 1, 0, 0]
     for v in vecs:
+        quat = vect_to_quat(v[3:6].T)
         p = Pose()
         p.position.x = v[0]
         p.position.y = v[1]
@@ -140,11 +148,38 @@ def bound_point(pnt):
 def listener():
     global pub
     pub = rospy.Publisher('TMS_path', PoseArray, queue_size=10)
+    sphere_pub = rospy.Publisher('sphere_marker', Marker, queue_size=10)
+    bounds_pub = rospy.Publisher('bounds_marker', Marker, queue_size=10)
     rospy.Subscriber("head_target", Float32MultiArray, callback)
     
-    rospy.spin()
+    rate = rospy.Rate(5)
+    while not rospy.is_shutdown():
+        sphere_pub.publish(gen_sphere())
       
+def gen_sphere():
+    m = Marker() 
+    m.type = 2  
+    m.header.frame_id = "world"
         
+    m.color.r = 255
+    m.color.g = 255
+    m.color.b = 255
+    m.color.a = 0.5
+        
+    m.pose.position.x = ORIGIN[0]
+    m.pose.position.y = ORIGIN[1]
+    m.pose.position.z = ORIGIN[2]
+        
+    m.pose.orientation.x = 0
+    m.pose.orientation.y = 1
+    m.pose.orientation.z = 0
+    m.pose.orientation.w = 0
+        
+    m.scale.x =PATH_RAD * 2
+    m.scale.y =PATH_RAD * 2
+    m.scale.z =PATH_RAD * 2
+    
+    return m
         
 if __name__ == '__main__':
     print("target_publisher starting up...")

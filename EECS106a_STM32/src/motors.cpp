@@ -40,8 +40,8 @@
 
 // Max position to end at. This is set to stepper value of OL and encoder value for CL
 // long MAX_POS[6] = {8000, 1000, 44000, 12568, 50000, 50000}; // Max step position for each motor
-long MAX_POS[6] = {8000, 1000, 44000, 160000, 52000, 52000}; // Max step position for each motor
-const long MAX_SPEED[6] = {700, 600, 3000, 5000, 2000, 2000};
+long MAX_POS[6] = {8000, 1100, 44000, 160000, 52000, 52000}; // Max step position for each motor
+const long MAX_SPEED[6] = {700, 600, 3000, 5000, 1500, 1500};
 const long MAX_ACCELERATION[6] = {40000, 40000, 40000, 40000, 40000, 40000};
 
 const int homing_step = 10000;

@@ -26,7 +26,9 @@ def callback(message):
     rospy.sleep(0.5)
     
     path = message.poses
-    input('Press [ Enter ] to start path')
+    usrin = input('Press [ Enter ] to begin, [n] to exit]')
+    if usrin == 'n':
+        return
     try:
         operate_path(path)
         print("Completed Movement\n")
@@ -39,12 +41,22 @@ def callback(message):
 def operate_path(path):
     ik_solutions = []
     
-    for p in path:
-        ik_solutions.append(solve_pose(p))
+    # for p in path:
+    #     ik_solutions.append(solve_pose(p))
         
-    for s in ik_solutions:
+    # for s in ik_solutions:
+    #     print("next movement target: ", s)
+    #     usrin = input('Press [ Enter ] to begin, [n] to exit]')
+    #     if usrin == 'n':
+    #         break
+    #     sent_pose(s)
+    
+    for p in path:
+        s = solve_pose(p)
         print("next movement target: ", s)
-        input('Press [ Enter ] to begin')
+        usrin = input('Press [ Enter ] to begin, [n] to exit]')
+        if usrin == 'n':
+            break
         sent_pose(s)
         
 
