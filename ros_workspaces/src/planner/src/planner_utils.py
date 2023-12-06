@@ -1,24 +1,11 @@
 import numpy as np
-from planner import PATH_RAD, ORIGIN
 from scipy.spatial.transform import Rotation as R
 from tf.transformations import quaternion_from_euler
 from visualization_msgs.msg import Marker
 from skspatial.objects import Line, Sphere
 from geometry_msgs.msg import Pose
 from geometry_msgs.msg import Quaternion
-
-
-def get_intercept(pos, vec):
-    target_line = Line(pos, vec)
-    ref_sphere = Sphere(ORIGIN, PATH_RAD)
-
-    target_a, target_b = ref_sphere.intersect_line(target_line)
-    return pick_point(target_a, target_b)
-
-def pick_point(p1, p2):
-    if (p1[0] - ORIGIN[0]) > 0 and abs((p1[1] - ORIGIN[1])) < PATH_RAD and (p1[2] - ORIGIN[2]) > 0:
-        return p1
-    return p2   
+   
 
 def convert_poses(pos, vec):
     quat = vect_to_quat(vec)
@@ -33,8 +20,6 @@ def convert_poses(pos, vec):
     p.orientation.w = quat[3]
     
     return p
-
-
 
 
 
@@ -75,6 +60,8 @@ def vect_to_quat(v):
     roll, pitch, yaw = get_rpy(v)
     # return quaternion_from_euler(0 - np.pi/2, pitch + np.pi/2, yaw + np.pi/2)
     return quaternion_from_euler(yaw, pitch, roll)
+    # val = np.array([v[0], -v[1], v[2], 0])
+    # return -val/np.linalg.norm(val)
 
 
 
@@ -91,29 +78,6 @@ def transform_to_vec(tf):
  
  
         
-def gen_sphere(rad, origin, colour = (255, 255, 255, 0.5)):
-    m = Marker() 
-    m.type = 2  
-    m.header.frame_id = "world"
-        
-    m.color.r = colour[0]
-    m.color.g = colour[1]
-    m.color.b = colour[2]
-    m.color.a = colour[3]
-        
-    m.pose.position.x = origin[0]
-    m.pose.position.y = origin[1]
-    m.pose.position.z = origin[2]
-        
-    m.pose.orientation.x = 0
-    m.pose.orientation.y = 1
-    m.pose.orientation.z = 0
-    m.pose.orientation.w = 0
-        
-    m.scale.x =rad * 2
-    m.scale.y =rad * 2
-    m.scale.z =rad * 2
-    
-    return m    
+
     
    

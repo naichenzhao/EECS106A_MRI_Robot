@@ -11,24 +11,28 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from mpl_toolkits.mplot3d import proj3d
+import tf2_ros
+
+head_offset = [1.08, 0.283, -0.545]
 
 stl_dimensions = [0.08024935, 0.10076117, 0.11059876] #in meters
 #Minimum values for each column: [-34.263749225768464, -51.01442793534265, 0.012813402258831522]
 #Maximum values for each column: [42.177958349799546, 48.23456001281738, 110.36154221754808]
 scaling_factor = .23/110.34872881528925
+
 global_points = np.array([])
 global_normals = np.array([])
 clicked = False
 pub = rospy.Publisher('TMS/head_target', Float32MultiArray, queue_size=10)
 #4x4 homogenous matrix, from world frame to body frame
-homogenous_matrix = np.array([[0.0, 0.0, -1, 1.0],
-                              [1, 0.0, 0.0, 0.29],
-                              [0.0, -1, 0.0, 0.215],
-                              [0.0, 0.0, 0.0, 1.0]])
+homogenous_matrix = np.array([[0.0, 0.0, -1],
+                              [1, 0.0, 0.0],
+                              [0.0, -1, 0.0]])
 
 vect_transf = np.array([[0, 0, -1],
                         [0, 1, 0],
                         [-1, 0, 0]])
+
 
 
 class InteractivePlot(QMainWindow):
@@ -98,23 +102,26 @@ class InteractivePlot(QMainWindow):
 
 
 def usr_input(pub):
-    # TODO: read the target from the gui
-    # usr_pos = input("Please insert the position:   ")
+    tfBuffer = tf2_ros.Buffer()
+    tfListener = tf2_ros.TransformListener(tfBuffer)
     
-
-    #vals = np.array([float(i) for i in usr_input.split(", ")])
+    trans = tfBuffer.lookup_transform("nec", "world", rospy.Time(), rospy.Duration(0.1))
+    x_trans = trans.transform.translation.x
+    y_trans = trans.transform.translation.y
+    z_trans = trans.transform.translation.z
+    
+    
     try:
     #cast to float
-    
-        pos = (global_points * scaling_factor)
+        pos = (global_points * scaling_factor) 
         vec = (global_normals)
         
         print(pos, vec)
 
         #transform to world frame
-        pos = np.matmul(homogenous_matrix, np.append(pos, 1))
+        pos = np.matmul(homogenous_matrix, pos) + head_offset + np.array([x_trans, y_trans, z_trans])
 
-        vec = np.matmul(vect_transf, vec)
+        vec = np.matmul(homogenous_matrix, vec)
 
         msg = Float32MultiArray()
         msg.data = np.concatenate((pos, vec))

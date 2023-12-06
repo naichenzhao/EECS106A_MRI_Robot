@@ -16,22 +16,20 @@ from trajectory_msgs.msg import JointTrajectoryPoint
 from sensor_msgs.msg import JointState
 from geometry_msgs.msg import Pose, PoseArray, Point32
 from std_msgs.msg import Float32MultiArray
-from visualization_msgs.msg import Marker
+
 from sensor_msgs.msg import PointCloud
 
 from planner_utils import *
 
 # radius for path circle
-PATH_RAD = 0.16
+PATH_RAD = 0.17
 HEAD_RAD = (0.13/2)
-# center point for path circle
-ORIGIN = np.array([0.84, 0.3007, 0.23])
-HEAD_ORIGIN = np.array([0.84, 0.3007, 0.23])
 
 # (aproximate) bounding box for reachable locations
 UPPER_BOUNDS = np.array([1.019, 0.2167, 0.2452])
 LOWER_BOUNDS = np.array([0.7196, 0.3847, 0.3802])
-REF_SPHERE = Sphere(ORIGIN, PATH_RAD)
+
+offset = [0.91, 0.2915, -0.523]
 
 PRINT_PATH = False
 
@@ -62,10 +60,13 @@ def callback(message):
 # |-------------------------------------------------------------|    
 def generate_path(target):
     pos = target[0:3]
-    # vec = [target[0] - ORIGIN[0], target[1] - ORIGIN[1], target[2] - ORIGIN[2]]
-    vec = [-target[3], -target[4], -target[5]]
+    vec = [target[3], target[4], target[5]]
     
-    circ_pnt = get_intercept(pos, vec)
+    origin = get_origin()
+    print(origin)
+    print(pos, vec)
+    
+    circ_pnt = get_intercept(pos, vec, origin)
     
     center = convert_poses(pos, vec)
     center_ik = solve_pose(center)
@@ -78,7 +79,7 @@ def generate_path(target):
     disp_vector(pos, vec)
     
     # Construct path
-    if pos[1] > ORIGIN[1]:
+    if pos[1] > origin[1]:
         path = [HOME, REF_LEFT, surface_ik, center_ik, surface_ik, REF_LEFT, HOME]
     else:
         path = [HOME, REF_RIGHT, surface_ik, center_ik, surface_ik, REF_RIGHT, HOME]
@@ -133,6 +134,33 @@ def disp_poses(center, surface):
     msg.header.stamp = rospy.Time.now()
     msg.poses = [center, surface]
     posePub.publish(msg)
+
+def get_intercept(pos, vec, origin):
+    target_line = Line(pos, vec)
+    ref_sphere = Sphere(origin, PATH_RAD)
+
+    target_a, target_b = ref_sphere.intersect_line(target_line)
+    return pick_point(target_a, target_b, origin)
+
+def pick_point(p1, p2, origin):
+    if (p1[0] - origin[0]) > 0 and (p1[2] - origin[2]) > 0:
+        return p1
+    return p2
+
+
+def get_origin():
+    while not rospy.is_shutdown():
+        try:
+            trans = tfBuffer.lookup_transform("nec", "world", rospy.Time(), rospy.Duration(0.1))
+            x_trans = trans.transform.translation.x + offset[0]
+            y_trans = trans.transform.translation.y + offset[1]
+            z_trans = trans.transform.translation.z + offset[2]
+            
+            return np.array([x_trans, y_trans, z_trans])
+        except:
+            print('ruh')
+    
+    
  
 # Display poses in Rviz
 def disp_vector(pnt, vec):
@@ -163,14 +191,15 @@ def listener():
     posePub = rospy.Publisher('TMS/path', PoseArray, queue_size=10)
     vecPub = rospy.Publisher('TMS/vector', PointCloud, queue_size=10)
     
-    sphere_pub = rospy.Publisher('TMS/sphere_marker', Marker, queue_size=10)
-    head_pub = rospy.Publisher('TMS/head_marker', Marker, queue_size=10)
+    
     rospy.Subscriber("TMS/head_target", Float32MultiArray, callback)
     
-    rate = rospy.Rate(5)
+    rospy.spin()
+    
+    r = rospy.Rate(10)
     while not rospy.is_shutdown():
-        sphere_pub.publish(gen_sphere(PATH_RAD, ORIGIN))
-        head_pub.publish(gen_sphere(HEAD_RAD, HEAD_ORIGIN, colour = (0, 255, 255, 1)))
+        origin = get_origin()
+        
       
         
 if __name__ == '__main__':

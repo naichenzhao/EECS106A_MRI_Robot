@@ -4,7 +4,7 @@ import numpy as np
 from geometry_msgs.msg import WrenchStamped    
 from std_msgs.msg import Float32MultiArray
 
-pub = rospy.Publisher('/tms/force', Float32MultiArray, queue_size=10)
+pub = rospy.Publisher('/TMS/force', Float32MultiArray, queue_size=10)
 def listener():
     rospy.Subscriber("/wireless_ft/wrench_1", WrenchStamped, callback)
     rospy.spin()

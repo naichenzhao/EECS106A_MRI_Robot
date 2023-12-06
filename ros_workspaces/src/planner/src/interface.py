@@ -11,6 +11,7 @@ from trajectory_msgs.msg import JointTrajectoryPoint
 from sensor_msgs.msg import JointState
 from geometry_msgs.msg import Pose, PoseArray, WrenchStamped
 from moveit_commander import MoveGroupCommander
+from std_msgs.msg import Float32MultiArray
 
 
 # Define global variables
@@ -18,13 +19,18 @@ from moveit_commander import MoveGroupCommander
 # Origins and limits from URDF file
 limits = np.array([-0.3, 0.169, -0.137, -3.14, -3.14, -3.14])
 
+
 pub = None
+
+force = 0
+
 
 idle = True
 simulated = False
 critical_state = False
 
 LIMIT = 500
+FORCE_LIMIT = 0.035
 
 # Listener callback for path planning
 def Path_callback(message):
@@ -43,12 +49,14 @@ def Path_callback(message):
 
 # Listener callback for entering a critical state
 def FTSensor_callback(message):
-    print("inhere")
-    print(message)
+    global force
+    force = (message.data[0] + 27.6288) * 10000
+    # print(force)
 
           
 def operate_path(trajectory):
     waypoints = trajectory.joint_trajectory.points
+    send_data('s', type = 1)
     
     # move to prepare movement
     for i in range(3):
@@ -86,12 +94,13 @@ def movegroup(current_target, lim = LIMIT):
             
             refval = np.linalg.norm(convert_values(np.array(current_target)) - np.array(encoder_angles) )
             if refval < lim:
-                # print("Reached Waypoint!")
                 break
 
 # Move robot to a certain point with critical conditions
 def movegroup_critical(current_target, lim = LIMIT):
+    f_ref = force
     send_pose(current_target)
+    triggered = False
     
     if simulated :
         time.sleep(1)
@@ -101,12 +110,19 @@ def movegroup_critical(current_target, lim = LIMIT):
         encoder_angles = parse_input(read_val)
             
         if len(encoder_angles) == 6:
+            if triggered:
+                send_pose(deconv_values(encoder_angles))
+                print("OOPS")
+                break
+            
             push_states(deconv_values(encoder_angles))
             
             refval = np.linalg.norm(convert_values(np.array(current_target)) - np.array(encoder_angles) )
             if refval < lim:
                 # print("Reached Waypoint!")
                 break
+        
+        triggered = triggered or (abs(force - f_ref) > FORCE_LIMIT)
 
 
 def send_pose(joint_values):
@@ -122,7 +138,7 @@ def listener():
     global pub
     pub = rospy.Publisher('joint_states', JointState, queue_size=10)
     
-    rospy.Subscriber("wireless_ft/wrench_1", WrenchStamped, FTSensor_callback)
+    rospy.Subscriber("TMS/force", Float32MultiArray, FTSensor_callback)
     rospy.Subscriber("TMS/trajectory", RobotTrajectory, Path_callback)
     
     while not rospy.is_shutdown():
@@ -141,12 +157,12 @@ def parse_input(read_val):
         pr_data = str(read_val[1:-3])
         try:
             angles = [int(i) for i in pr_data.split(" ")]
-            print("   [STM]:", angles)
+            # print("   [STM]:", angles)
             return angles
         except:
             print("failed split")
-    else:
-        print("   [STM]:", read_val[:-1])
+    # else:
+        # print("   [STM]:", read_val[:-1])
     return []
 
 

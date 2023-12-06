@@ -42,7 +42,7 @@
 // long MAX_POS[6] = {8000, 1000, 44000, 12568, 50000, 50000}; // Max step position for each motor
 long MAX_POS[6] = {8000, 1120, 44000, 160000, 52000, 52000}; // Max step position for each motor
 const long MAX_SPEED[6] = {700, 600, 3200, 5000, 1600, 1600}; // maximum speed per motor
-const long CRIT_SPEED[6] = {300, 250, 1300, 2500, 800, 800}; // critical speed per motor
+const long CRIT_SPEED[6] = {150, 100, 500, 1800, 600, 600}; // critical speed per motor
 const long MAX_ACCELERATION[6] = {40000, 40000, 40000, 40000, 40000, 40000};
 
 const int homing_step = 10000;

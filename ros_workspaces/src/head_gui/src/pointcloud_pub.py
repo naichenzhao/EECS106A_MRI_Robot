@@ -12,6 +12,9 @@ import matplotlib.pyplot as plt
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from mpl_toolkits.mplot3d import proj3d
 from sensor_msgs.msg import PointCloud
+import tf2_ros
+from visualization_msgs.msg import Marker
+import time
 
 from head_pub import homogenous_matrix
 
@@ -25,9 +28,18 @@ clicked = False
 # pub = rospy.Publisher('TMS/head_target', Float32MultiArray, queue_size=10)
 # 4x4 homogenous matrix, from world frame to body frame
 
+# radius for path circle
+PATH_RAD = 0.16
+HEAD_RAD = (0.13/2)
+
 pub = rospy.Publisher('TMS/head_pointcloud', PointCloud, queue_size=10)
+sphere_pub = rospy.Publisher('TMS/sphere_marker', Marker, queue_size=10)
+head_pub = rospy.Publisher('TMS/head_marker', Marker, queue_size=10)
 path = os.getcwd()
 
+
+head_offset = [1.08, 0.283, -0.545]
+sphere_offset = [0.91, 0.2915, -0.523]
 
 def transform_points():
     # cast to float
@@ -39,18 +51,58 @@ def transform_points():
     # transform to world frame
     for i in range(len(saved_reduced_points)):
         saved_reduced_points[i] = np.matmul(
-            homogenous_matrix, np.append(saved_reduced_points[i], 1))[0:3]
+            homogenous_matrix, saved_reduced_points[i])
     for i in range(len(saved_normals)):
         saved_normals[i] = np.matmul(
-            homogenous_matrix, np.append(saved_normals[i], 0))[0:3]
+            homogenous_matrix, saved_normals[i])
+        
+    tfBuffer = tf2_ros.Buffer()
+    tfListener = tf2_ros.TransformListener(tfBuffer)
+    try:
+        trans = tfBuffer.lookup_transform("nec", "world", rospy.Time(), rospy.Duration(0.1))
+        origin = np.array([trans.transform.translation.x, trans.transform.translation.y, trans.transform.translation.z])
+        sphere_pub.publish(gen_sphere(PATH_RAD, origin + sphere_offset))
+        head_pub.publish(gen_sphere(HEAD_RAD, origin + sphere_offset, colour = (0, 255, 255, 1)))
+        pub.publish(gen_head(origin + head_offset, saved_reduced_points))
+        
+        print(origin)
+        rospy.sleep(0.2)
+    except:
+        return
 
+def gen_sphere(rad, origin, colour = (255, 255, 255, 0.5)):
+    m = Marker() 
+    m.type = 2  
+    m.header.frame_id = "world"
+        
+    m.color.r = colour[0]
+    m.color.g = colour[1]
+    m.color.b = colour[2]
+    m.color.a = colour[3]
+        
+    m.pose.position.x = origin[0]
+    m.pose.position.y = origin[1]
+    m.pose.position.z = origin[2]
+        
+    m.pose.orientation.x = 0
+    m.pose.orientation.y = 1
+    m.pose.orientation.z = 0
+    m.pose.orientation.w = 0
+        
+    m.scale.x =rad * 2
+    m.scale.y =rad * 2
+    m.scale.z =rad * 2
+    
+    return m    
+
+
+def gen_head(origin, saved_reduced_points):
     msg = PointCloud()
-
-    msg.points = [Point32(x=saved_reduced_points[i][0], y=saved_reduced_points[i]
-                          [1], z=saved_reduced_points[i][2]) for i in range(len(saved_reduced_points))]
+    msg.points = [Point32(x=(saved_reduced_points[i][0] + origin[0]), y=(saved_reduced_points[i] + origin[1])
+                            [1], z=(saved_reduced_points[i][2]+ origin[2])) for i in range(len(saved_reduced_points))]
     msg.header.frame_id = "world"
-
-    pub.publish(msg)
+    return msg
+    
 
 
 if __name__ == '__main__':
@@ -59,8 +111,8 @@ if __name__ == '__main__':
     # rospy.sleep(3) #wait for 3 seconds
 
     try:
-        # InteractivePlot()
-        print("============ STARTING TEST ============ ")
+        print("Publishing Points")
+        r = rospy.Rate(0.5)
         while not rospy.is_shutdown():
             transform_points()
 

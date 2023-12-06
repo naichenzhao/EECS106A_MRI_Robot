@@ -12,10 +12,10 @@ def something(target_frame, source_frame):
 
     while not rospy.is_shutdown():
         try:
-            trans = tfBuffer.lookup_transform("world", "TMS_HEAD_Link", rospy.Time(), rospy.Duration(0.1))
+            trans = tfBuffer.lookup_transform("nec", "robo", rospy.Time(), rospy.Duration(0.1))
             #no need for listener
             print(trans)
-            time.sleep(1)
+            time.sleep(0.1)
             
         except (tf2_ros.LookupException,
             tf2_ros.ConnectivityException,
