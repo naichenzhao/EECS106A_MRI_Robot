@@ -13,6 +13,8 @@ from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from mpl_toolkits.mplot3d import proj3d
 from sensor_msgs.msg import PointCloud
 
+from head_pub import homogenous_matrix
+
 stl_dimensions = [0.08024935, 0.10076117, 0.11059876]  # in meters
 # Minimum values for each column: [-34.263749225768464, -51.01442793534265, 0.012813402258831522]
 # Maximum values for each column: [42.177958349799546, 48.23456001281738, 110.36154221754808]
@@ -22,11 +24,6 @@ global_normals = np.array([])
 clicked = False
 # pub = rospy.Publisher('TMS/head_target', Float32MultiArray, queue_size=10)
 # 4x4 homogenous matrix, from world frame to body frame
-homogenous_matrix = np.array([[0.0, 0.0, -1, 0.97],
-                              [1, 0.0, 0.0, 0.3007],
-                              [0.0, -1, 0.0, 0.21],
-                              [0.0, 0.0, 0.0, 1.0]])
-
 
 pub = rospy.Publisher('TMS/head_pointcloud', PointCloud, queue_size=10)
 path = os.getcwd()

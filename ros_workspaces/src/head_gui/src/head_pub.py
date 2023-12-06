@@ -21,10 +21,14 @@ global_normals = np.array([])
 clicked = False
 pub = rospy.Publisher('TMS/head_target', Float32MultiArray, queue_size=10)
 #4x4 homogenous matrix, from world frame to body frame
-homogenous_matrix = np.array([[0.0, 0.0, -1, 0.97],
-                              [1, 0.0, 0.0, 0.3007],
-                              [0.0, -1, 0.0, 0.23],
+homogenous_matrix = np.array([[0.0, 0.0, -1, 1.0],
+                              [1, 0.0, 0.0, 0.29],
+                              [0.0, -1, 0.0, 0.215],
                               [0.0, 0.0, 0.0, 1.0]])
+
+vect_transf = np.array([[0, 0, -1],
+                        [0, 1, 0],
+                        [-1, 0, 0]])
 
 
 class InteractivePlot(QMainWindow):
@@ -101,16 +105,16 @@ def usr_input(pub):
     #vals = np.array([float(i) for i in usr_input.split(", ")])
     try:
     #cast to float
+    
         pos = (global_points * scaling_factor)
         vec = (global_normals)
+        
+        print(pos, vec)
 
         #transform to world frame
         pos = np.matmul(homogenous_matrix, np.append(pos, 1))
 
-        vec = np.matmul(homogenous_matrix, np.append(vec, 0))
-        
-        print(pos)
-        print(vec)
+        vec = np.matmul(vect_transf, vec)
 
         msg = Float32MultiArray()
         msg.data = np.concatenate((pos, vec))
@@ -123,7 +127,7 @@ def usr_input(pub):
         # msg.orientation.y = vec[1]
         # msg.orientation.z = vec[2]
 
-        print("Message Send:",  msg, "\n")
+        # print("Message Send:",  msg, "\n")
         pub.publish(msg)
     except:
         print("invalid input. continuing...")

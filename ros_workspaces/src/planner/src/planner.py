@@ -14,14 +14,15 @@ from moveit_msgs.srv import GetPositionIK, GetPositionIKRequest, GetPositionIKRe
 from moveit_msgs.msg import RobotTrajectory
 from trajectory_msgs.msg import JointTrajectoryPoint
 from sensor_msgs.msg import JointState
-from geometry_msgs.msg import Pose, PoseArray
+from geometry_msgs.msg import Pose, PoseArray, Point32
 from std_msgs.msg import Float32MultiArray
 from visualization_msgs.msg import Marker
+from sensor_msgs.msg import PointCloud
 
 from planner_utils import *
 
 # radius for path circle
-PATH_RAD = 0.13
+PATH_RAD = 0.16
 HEAD_RAD = (0.13/2)
 # center point for path circle
 ORIGIN = np.array([0.84, 0.3007, 0.23])
@@ -36,11 +37,12 @@ PRINT_PATH = False
 
 posePub = None
 jointPub = None
+vecPub = None
 
 
-HOME = [-0.05, 0.0845, -0.01, 0, 0, 0]
-REF_LEFT = [-0.05, 0, -0.01, 0, 0, 0]
-REF_RIGHT = [-0.05, 0.169, -0.01, 0, 0, 0]
+HOME = [0, 0.0845, -0.01, 0, 0, 0]
+REF_LEFT = [0, 0, -0.01, 0, 0, 0]
+REF_RIGHT = [0, 0.169, -0.01, 0, 0, 0]
 
 # Listener callback
 def callback(message):
@@ -60,7 +62,8 @@ def callback(message):
 # |-------------------------------------------------------------|    
 def generate_path(target):
     pos = target[0:3]
-    vec = target[3:6]
+    # vec = [target[0] - ORIGIN[0], target[1] - ORIGIN[1], target[2] - ORIGIN[2]]
+    vec = [-target[3], -target[4], -target[5]]
     
     circ_pnt = get_intercept(pos, vec)
     
@@ -72,6 +75,7 @@ def generate_path(target):
     
     # Show poses in Rviz
     disp_poses(center, surface)
+    disp_vector(pos, vec)
     
     # Construct path
     if pos[1] > ORIGIN[1]:
@@ -129,15 +133,36 @@ def disp_poses(center, surface):
     msg.header.stamp = rospy.Time.now()
     msg.poses = [center, surface]
     posePub.publish(msg)
-       
+ 
+# Display poses in Rviz
+def disp_vector(pnt, vec):
+    msg = PointCloud()
+    
+    p1 = Point32()
+    p1.x = pnt[0]
+    p1.y = pnt[1]
+    p1.z = pnt[2]
+    
+    p2 = Point32()
+    p2.x = pnt[0] + vec[0]*0.1
+    p2.y = pnt[1] + vec[1]*0.1
+    p2.z = pnt[2] + vec[2]*0.1
+    
+    
+    msg.points = [p1, p2]
+    msg.header.frame_id = "world"
+    vecPub.publish(msg)      
     
 
 def listener():
     global posePub
     global jointPub
+    global vecPub
     
     jointPub = rospy.Publisher('TMS/trajectory', RobotTrajectory, queue_size=10) 
     posePub = rospy.Publisher('TMS/path', PoseArray, queue_size=10)
+    vecPub = rospy.Publisher('TMS/vector', PointCloud, queue_size=10)
+    
     sphere_pub = rospy.Publisher('TMS/sphere_marker', Marker, queue_size=10)
     head_pub = rospy.Publisher('TMS/head_marker', Marker, queue_size=10)
     rospy.Subscriber("TMS/head_target", Float32MultiArray, callback)
