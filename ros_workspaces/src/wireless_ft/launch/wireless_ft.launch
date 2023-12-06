@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<launch>
+
+  <arg name="launch_rviz" default="false" />
+
+
+  <!-- 
+  - Uploads the robot_description (lwr + c5hand+ rack) to the param server.
+
+  2016.12.13 - fnh: created
+  -->
+
+  <node name="wireless_ft" pkg="wireless_ft" type="tams_wireless_ft" output="screen" > </node>
+  <node name="translate_ft" pkg="wireless_ft" type="transform.py" output="screen" > </node>
+ 
+</launch>

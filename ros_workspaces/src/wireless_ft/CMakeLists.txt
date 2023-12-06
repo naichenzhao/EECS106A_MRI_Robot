@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0.2)
-project(ft_transform)
+project(wireless_ft)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
 # add_compile_options(-std=c++11)
@@ -9,8 +9,12 @@ project(ft_transform)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
   geometry_msgs
+  roscpp
   rospy
+  sensor_msgs
   std_msgs
+  tf
+  tf_conversions
 )
 
 ## System dependencies are found with CMake's conventions
@@ -70,7 +74,7 @@ find_package(catkin REQUIRED COMPONENTS
 ## Generate added messages and services with any dependencies listed here
 # generate_messages(
 #   DEPENDENCIES
-#   geometry_msgs#   std_msgs
+#   geometry_msgs#   sensor_msgs#   std_msgs
 # )
 
 ################################################
@@ -104,8 +108,8 @@ find_package(catkin REQUIRED COMPONENTS
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
 #  INCLUDE_DIRS include
-#  LIBRARIES ft_transform
-#  CATKIN_DEPENDS geometry_msgs rospy std_msgs
+#  LIBRARIES wireless_ft
+#  CATKIN_DEPENDS geometry_msgs roscpp rospy sensor_msgs std_msgs tf tf_conversions
 #  DEPENDS system_lib
 )
 
@@ -118,11 +122,13 @@ catkin_package(
 include_directories(
 # include
   ${catkin_INCLUDE_DIRS}
+  $(Boost_INCLUDE_DIRS)
+  $(Eigen_INCLUDE_DIRS)
 )
 
 ## Declare a C++ library
 # add_library(${PROJECT_NAME}
-#   src/${PROJECT_NAME}/ft_transform.cpp
+#   src/${PROJECT_NAME}/wireless_ft.cpp
 # )
 
 ## Add cmake target dependencies of the library
@@ -133,16 +139,16 @@ include_directories(
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
-# add_executable(${PROJECT_NAME}_node src/ft_transform_node.cpp)
+# add_executable(${PROJECT_NAME}_node src/wireless_ft_node.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
 ## target back to the shorter version for ease of user use
 ## e.g. "rosrun someones_pkg node" instead of "rosrun someones_pkg someones_pkg_node"
-# set_target_properties(${PROJECT_NAME}_node PROPERTIES OUTPUT_NAME node PREFIX "")
-
-## Add cmake target dependencies of the executable
-## same as for the library above
+add_executable(tams_wireless_ft src/wireless_ft.cpp)
+target_link_libraries(tams_wireless_ft
+  ${catkin_LIBRARIES} ${Eigen_LIBRARIES} pthread
+)
 # add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
@@ -197,7 +203,7 @@ include_directories(
 #############
 
 ## Add gtest based cpp test target and link libraries
-# catkin_add_gtest(${PROJECT_NAME}-test test/test_ft_transform.cpp)
+# catkin_add_gtest(${PROJECT_NAME}-test test/test_wireless_ft.cpp)
 # if(TARGET ${PROJECT_NAME}-test)
 #   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
 # endif()
