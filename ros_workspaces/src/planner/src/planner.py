@@ -22,9 +22,10 @@ from planner_utils import *
 
 # radius for path circle
 PATH_RAD = 0.13
-
+HEAD_RAD = (0.13/2)
 # center point for path circle
 ORIGIN = np.array([0.84, 0.3007, 0.23])
+HEAD_ORIGIN = np.array([0.84, 0.3007, 0.23])
 
 # (aproximate) bounding box for reachable locations
 UPPER_BOUNDS = np.array([1.019, 0.2167, 0.2452])
@@ -138,11 +139,13 @@ def listener():
     jointPub = rospy.Publisher('TMS/trajectory', RobotTrajectory, queue_size=10) 
     posePub = rospy.Publisher('TMS/path', PoseArray, queue_size=10)
     sphere_pub = rospy.Publisher('TMS/sphere_marker', Marker, queue_size=10)
+    head_pub = rospy.Publisher('TMS/head_marker', Marker, queue_size=10)
     rospy.Subscriber("TMS/head_target", Float32MultiArray, callback)
     
     rate = rospy.Rate(5)
     while not rospy.is_shutdown():
-        sphere_pub.publish(gen_sphere())
+        sphere_pub.publish(gen_sphere(PATH_RAD, ORIGIN))
+        head_pub.publish(gen_sphere(HEAD_RAD, HEAD_ORIGIN, colour = (0, 255, 255, 1)))
       
         
 if __name__ == '__main__':

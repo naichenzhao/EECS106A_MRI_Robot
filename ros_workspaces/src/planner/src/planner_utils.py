@@ -91,28 +91,28 @@ def transform_to_vec(tf):
  
  
         
-def gen_sphere():
+def gen_sphere(rad, origin, colour = (255, 255, 255, 0.5)):
     m = Marker() 
     m.type = 2  
     m.header.frame_id = "world"
         
-    m.color.r = 255
-    m.color.g = 255
-    m.color.b = 255
-    m.color.a = 0.5
+    m.color.r = colour[0]
+    m.color.g = colour[1]
+    m.color.b = colour[2]
+    m.color.a = colour[3]
         
-    m.pose.position.x = ORIGIN[0]
-    m.pose.position.y = ORIGIN[1]
-    m.pose.position.z = ORIGIN[2]
+    m.pose.position.x = origin[0]
+    m.pose.position.y = origin[1]
+    m.pose.position.z = origin[2]
         
     m.pose.orientation.x = 0
     m.pose.orientation.y = 1
     m.pose.orientation.z = 0
     m.pose.orientation.w = 0
         
-    m.scale.x =PATH_RAD * 2
-    m.scale.y =PATH_RAD * 2
-    m.scale.z =PATH_RAD * 2
+    m.scale.x =rad * 2
+    m.scale.y =rad * 2
+    m.scale.z =rad * 2
     
     return m    
     

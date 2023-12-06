@@ -141,7 +141,7 @@ def parse_input(read_val):
         pr_data = str(read_val[1:-3])
         try:
             angles = [int(i) for i in pr_data.split(" ")]
-            # print("   [STM]:", angles)
+            print("   [STM]:", angles)
             return angles
         except:
             print("failed split")
