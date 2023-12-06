@@ -1,8 +1,0 @@
-prefix=/home/naichenzhao/Desktop/EECS106A_Project/ros_workspaces/install
-
-Name: urdf_testfile
-Description: Description of urdf_testfile
-Version: 0.3.0
-Cflags: 
-Libs: -L${prefix}/lib 
-Requires: 

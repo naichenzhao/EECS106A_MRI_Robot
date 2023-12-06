@@ -1,8 +1,0 @@
-prefix=/home/naichenzhao/Desktop/EECS106A_Project/ros_workspaces/install
-
-Name: tams_wireless_ft
-Description: Description of tams_wireless_ft
-Version: 0.1.0
-Cflags: 
-Libs: -L${prefix}/lib 
-Requires: 

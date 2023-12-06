@@ -1,8 +1,0 @@
-prefix=/home/naichenzhao/Desktop/EECS106A_Project/ros_workspaces/devel
-
-Name: ft_transform
-Description: Description of ft_transform
-Version: 0.0.0
-Cflags: 
-Libs: -L${prefix}/lib 
-Requires: 
