@@ -1,8 +1,0 @@
-prefix=/home/naichenzhao/Desktop/EECS106A_Project/ros_workspaces/devel
-
-Name: gantry
-Description: Description of gantry
-Version: 1.0.0
-Cflags: 
-Libs: -L${prefix}/lib 
-Requires: 
