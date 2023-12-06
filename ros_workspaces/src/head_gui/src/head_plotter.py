@@ -175,10 +175,23 @@ def visualize_point_cloud(reduced_points, normals, length_of_arrows=5):
     plt.show()
 
 
+def remove_positive_y_points():
+    # remove points with positive y values
+    global reduced_points
+    while True:
+        for i in range(len(reduced_points)):
+            if reduced_points[i][1] > -10:
+                reduced_points = np.delete(reduced_points, i, 0)
+                break
+        if i == len(reduced_points) - 1:
+            break
+
+
 def main():
     # Parallel computation of normals
     start_time = time.time()
     # max_points = 100   # Maximum number of points in the reduced point cloud
+    remove_positive_y_points()
     normals = calculate_normals(mesh, reduced_points)
     # print(normals)
     end_time = time.time()
