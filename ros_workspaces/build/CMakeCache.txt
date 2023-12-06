@@ -367,6 +367,15 @@ Project_BINARY_DIR:STATIC=/home/naichenzhao/Desktop/EECS106A_Project/ros_workspa
 //Value Computed by CMake
 Project_SOURCE_DIR:STATIC=/home/naichenzhao/Desktop/EECS106A_Project/ros_workspaces/src
 
+//Path to a file.
+QUATLIB_INCLUDE_DIR:PATH=/opt/ros/noetic/include
+
+//Path to a library.
+QUATLIB_LIBRARY:FILEPATH=/opt/ros/noetic/lib/libquat.a
+
+//Root directory to search for quatlib
+QUATLIB_ROOT_DIR:PATH=
+
 //Path to a library.
 RT_LIBRARY:FILEPATH=/usr/lib/x86_64-linux-gnu/librt.so
 
@@ -381,6 +390,21 @@ UBUNTU:BOOL=TRUE
 
 //LSB Distrib - codename tag
 UBUNTU_FOCAL:BOOL=TRUE
+
+//The directory containing a CMake configuration file for VRPN.
+VRPN_DIR:PATH=/opt/ros/noetic/share/vrpn/cmake
+
+//Path to a file.
+VRPN_INCLUDE_DIR:PATH=/opt/ros/noetic/include
+
+//Path to a library.
+VRPN_LIBRARY:FILEPATH=/opt/ros/noetic/lib/libvrpn.a
+
+//Root directory to search for VRPN
+VRPN_ROOT_DIR:PATH=
+
+//Path to a library.
+VRPN_SERVER_LIBRARY:FILEPATH=/opt/ros/noetic/lib/libvrpnserver.a
 
 //Path to a file.
 _gmock_INCLUDES:FILEPATH=/usr/src/googletest/googlemock/include/gmock/gmock.h
@@ -417,6 +441,12 @@ controller_SOURCE_DIR:STATIC=/home/naichenzhao/Desktop/EECS106A_Project/ros_work
 
 //The directory containing a CMake configuration file for cpp_common.
 cpp_common_DIR:PATH=/opt/ros/noetic/share/cpp_common/cmake
+
+//Value Computed by CMake
+ft_transform_BINARY_DIR:STATIC=/home/naichenzhao/Desktop/EECS106A_Project/ros_workspaces/build/ft_transform
+
+//Value Computed by CMake
+ft_transform_SOURCE_DIR:STATIC=/home/naichenzhao/Desktop/EECS106A_Project/ros_workspaces/src/ft_transform
 
 //Value Computed by CMake
 gantry_BINARY_DIR:STATIC=/home/naichenzhao/Desktop/EECS106A_Project/ros_workspaces/build/gantry
@@ -524,6 +554,9 @@ planner_BINARY_DIR:STATIC=/home/naichenzhao/Desktop/EECS106A_Project/ros_workspa
 //Value Computed by CMake
 planner_SOURCE_DIR:STATIC=/home/naichenzhao/Desktop/EECS106A_Project/ros_workspaces/src/planner
 
+//The directory containing a CMake configuration file for quatlib.
+quatlib_DIR:PATH=/opt/ros/noetic/share/quatlib/cmake
+
 //The directory containing a CMake configuration file for rosconsole.
 rosconsole_DIR:PATH=/opt/ros/noetic/share/rosconsole/cmake
 
@@ -544,6 +577,9 @@ rosgraph_msgs_DIR:PATH=/opt/ros/noetic/share/rosgraph_msgs/cmake
 
 //The directory containing a CMake configuration file for roslaunch.
 roslaunch_DIR:PATH=/opt/ros/noetic/share/roslaunch/cmake
+
+//The directory containing a CMake configuration file for roslint.
+roslint_DIR:PATH=/opt/ros/noetic/share/roslint/cmake
 
 //The directory containing a CMake configuration file for rospy.
 rospy_DIR:PATH=/opt/ros/noetic/share/rospy/cmake
@@ -598,6 +634,15 @@ urdf_testfile_BINARY_DIR:STATIC=/home/naichenzhao/Desktop/EECS106A_Project/ros_w
 
 //Value Computed by CMake
 urdf_testfile_SOURCE_DIR:STATIC=/home/naichenzhao/Desktop/EECS106A_Project/ros_workspaces/src/urdf_testfile
+
+//Value Computed by CMake
+vrpn_client_ros_BINARY_DIR:STATIC=/home/naichenzhao/Desktop/EECS106A_Project/ros_workspaces/build/vrpn_client_ros
+
+//Dependencies for the target
+vrpn_client_ros_LIB_DEPENDS:STATIC=general;/opt/ros/noetic/lib/libtf2_ros.so;general;/opt/ros/noetic/lib/libactionlib.so;general;/opt/ros/noetic/lib/libmessage_filters.so;general;/opt/ros/noetic/lib/libroscpp.so;general;/usr/lib/x86_64-linux-gnu/libpthread.so;general;/usr/lib/x86_64-linux-gnu/libboost_chrono.so.1.71.0;general;/usr/lib/x86_64-linux-gnu/libboost_filesystem.so.1.71.0;general;/opt/ros/noetic/lib/librosconsole.so;general;/opt/ros/noetic/lib/librosconsole_log4cxx.so;general;/opt/ros/noetic/lib/librosconsole_backend_interface.so;general;/usr/lib/x86_64-linux-gnu/liblog4cxx.so;general;/usr/lib/x86_64-linux-gnu/libboost_regex.so.1.71.0;general;/opt/ros/noetic/lib/libxmlrpcpp.so;general;/opt/ros/noetic/lib/libtf2.so;general;/opt/ros/noetic/lib/libroscpp_serialization.so;general;/opt/ros/noetic/lib/librostime.so;general;/usr/lib/x86_64-linux-gnu/libboost_date_time.so.1.71.0;general;/opt/ros/noetic/lib/libcpp_common.so;general;/usr/lib/x86_64-linux-gnu/libboost_system.so.1.71.0;general;/usr/lib/x86_64-linux-gnu/libboost_thread.so.1.71.0;general;/usr/lib/x86_64-linux-gnu/libconsole_bridge.so.0.4;general;/opt/ros/noetic/lib/libvrpn.a;general;/opt/ros/noetic/lib/libquat.a;general;m;general;-lpthread;
+
+//Value Computed by CMake
+vrpn_client_ros_SOURCE_DIR:STATIC=/home/naichenzhao/Desktop/EECS106A_Project/ros_workspaces/src/vrpn_client_ros
 
 //The directory containing a CMake configuration file for xmlrpcpp.
 xmlrpcpp_DIR:PATH=/opt/ros/noetic/share/xmlrpcpp/cmake
@@ -750,7 +795,7 @@ CMAKE_MODULE_LINKER_FLAGS_RELWITHDEBINFO-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_NM
 CMAKE_NM-ADVANCED:INTERNAL=1
 //number of local generators
-CMAKE_NUMBER_OF_MAKEFILES:INTERNAL=10
+CMAKE_NUMBER_OF_MAKEFILES:INTERNAL=12
 //ADVANCED property for variable: CMAKE_OBJCOPY
 CMAKE_OBJCOPY-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_OBJDUMP
@@ -799,6 +844,10 @@ FIND_PACKAGE_MESSAGE_DETAILS_PY_em:INTERNAL=[/usr/lib/python3/dist-packages/em.p
 FIND_PACKAGE_MESSAGE_DETAILS_PythonInterp:INTERNAL=[/usr/bin/python3][v3.8.10()]
 //Details about finding Threads
 FIND_PACKAGE_MESSAGE_DETAILS_Threads:INTERNAL=[TRUE][v()]
+//Details about finding VRPN
+FIND_PACKAGE_MESSAGE_DETAILS_VRPN:INTERNAL=[/opt/ros/noetic/lib/libvrpn.a][/opt/ros/noetic/include][TRUE][1][v()]
+//Details about finding quatlib
+FIND_PACKAGE_MESSAGE_DETAILS_quatlib:INTERNAL=[/opt/ros/noetic/lib/libquat.a][/opt/ros/noetic/include][v()]
 GMOCK_FROM_SOURCE_FOUND:INTERNAL=TRUE
 GMOCK_FROM_SOURCE_INCLUDE_DIRS:INTERNAL=/usr/src/googletest/googlemock/include
 GMOCK_FROM_SOURCE_LIBRARIES:INTERNAL=gmock
@@ -833,6 +882,20 @@ PYTHON_EXECUTABLE-ADVANCED:INTERNAL=1
 //  And it needs to match.  But setuptools won't tell us where
 // it will install things.
 PYTHON_INSTALL_DIR:INTERNAL=lib/python3/dist-packages
+//ADVANCED property for variable: QUATLIB_INCLUDE_DIR
+QUATLIB_INCLUDE_DIR-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: QUATLIB_LIBRARY
+QUATLIB_LIBRARY-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: QUATLIB_ROOT_DIR
+QUATLIB_ROOT_DIR-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: VRPN_INCLUDE_DIR
+VRPN_INCLUDE_DIR-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: VRPN_LIBRARY
+VRPN_LIBRARY-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: VRPN_ROOT_DIR
+VRPN_ROOT_DIR-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: VRPN_SERVER_LIBRARY
+VRPN_SERVER_LIBRARY-ADVANCED:INTERNAL=1
 //CMAKE_INSTALL_PREFIX during last run
 _GNUInstallDirs_LAST_CMAKE_INSTALL_PREFIX:INTERNAL=/home/naichenzhao/Desktop/EECS106A_Project/ros_workspaces/install
 //ADVANCED property for variable: gmock_build_tests
