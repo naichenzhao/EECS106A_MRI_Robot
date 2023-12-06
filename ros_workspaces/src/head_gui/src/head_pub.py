@@ -19,9 +19,9 @@ scaling_factor = .23/110.34872881528925
 global_points = np.array([])
 global_normals = np.array([])
 clicked = False
-pub = rospy.Publisher('TMS/head_target', Pose, queue_size=10)
+pub = rospy.Publisher('TMS/head_target', Float32MultiArray, queue_size=10)
 #4x4 homogenous matrix, from world frame to body frame
-homogenous_matrix = np.array([[0.0, 0.0, -1, 0.84],
+homogenous_matrix = np.array([[0.0, 0.0, -1, 0.97],
                               [1, 0.0, 0.0, 0.3007],
                               [0.0, -1, 0.0, 0.23],
                               [0.0, 0.0, 0.0, 1.0]])
@@ -112,15 +112,16 @@ def usr_input(pub):
         print(pos)
         print(vec)
 
-        msg = Pose()
-        # Set pose position
-        msg.position.x = pos[0]
-        msg.position.y = pos[1]
-        msg.position.z = pos[2]
-        # set pose orientation
-        msg.orientation.x = vec[0]
-        msg.orientation.y = vec[1]
-        msg.orientation.z = vec[2]
+        msg = Float32MultiArray()
+        msg.data = np.concatenate((pos, vec))
+        # # Set pose position
+        # msg.position.x = pos[0]
+        # msg.position.y = pos[1]
+        # msg.position.z = pos[2]
+        # # set pose orientation
+        # msg.orientation.x = vec[0]
+        # msg.orientation.y = vec[1]
+        # msg.orientation.z = vec[2]
 
         print("Message Send:",  msg, "\n")
         pub.publish(msg)

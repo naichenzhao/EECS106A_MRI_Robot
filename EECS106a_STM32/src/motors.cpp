@@ -40,8 +40,9 @@
 
 // Max position to end at. This is set to stepper value of OL and encoder value for CL
 // long MAX_POS[6] = {8000, 1000, 44000, 12568, 50000, 50000}; // Max step position for each motor
-long MAX_POS[6] = {8000, 1150, 44000, 160000, 52000, 52000}; // Max step position for each motor
-const long MAX_SPEED[6] = {700, 600, 3000, 5000, 1500, 1500};
+long MAX_POS[6] = {8000, 1120, 44000, 160000, 52000, 52000}; // Max step position for each motor
+const long MAX_SPEED[6] = {700, 600, 3200, 5000, 1600, 1600}; // maximum speed per motor
+const long CRIT_SPEED[6] = {300, 250, 1300, 2500, 800, 800}; // critical speed per motor
 const long MAX_ACCELERATION[6] = {40000, 40000, 40000, 40000, 40000, 40000};
 
 const int homing_step = 10000;
@@ -120,6 +121,7 @@ void setupMotors() {
 }
 
 void homeMotors() {
+    digitalWrite(13, HIGH);
     for (int i = 0; i < 6; i++) {
         STEPPERS[i]->setMaxSpeed(HOME_SPEED[i] + 1000);
         STEPPERS[i]->setAcceleration(MAX_ACCELERATION[i]);
@@ -151,14 +153,25 @@ void homeMotors() {
     reset_y();
     reset_z();
 
-    // setup constant values for steppers
-    for (int i = 0; i < 6; i++)
-    {
-        STEPPERS[i]->setMaxSpeed(MAX_SPEED[i] + 1000);
-        STEPPERS[i]->setAcceleration(MAX_ACCELERATION[i]);
-    }
-
     set_y_motor(5000);
+    digitalWrite(13, LOW);
+}
+
+
+void enterStandardState() {
+    //Have motor run at standard speed
+    digitalWrite(13, LOW);
+    for (int i = 0; i < 6; i++) {
+        STEPPERS[i]->setMaxSpeed(MAX_SPEED[i]);
+    }
+}
+
+void enterCriticalState() {
+    // Have motors run slower for critical step
+    digitalWrite(13, HIGH);
+    for (int i = 0; i < 6; i++) {
+        STEPPERS[i]->setMaxSpeed(CRIT_SPEED[i]);
+    }
 }
 
 void set_motors(long positions[]) {
@@ -289,17 +302,23 @@ void runStepperCL(int num) {
     // get PID control value
     int PID_val = (int) (Kp[num] * error_p + Ki[num] * error_i[num] + Kd[num] * error_d);
 
+    int motor_maxspeed = stepper->maxSpeed();
     // Set values
-    if (PID_val > (MAX_SPEED[num]-100) || PID_val < -(MAX_SPEED[num]-100)) { // Make sure we are within max speed bounds
-        stepper->setSpeed(PID_val > 0 ? MAX_SPEED[num]-100 : -(MAX_SPEED[num]-100));
+    if (PID_val > (motor_maxspeed - 50) || PID_val < -(motor_maxspeed - 50))
+    { // Make sure we are within max speed bounds
+        stepper->setSpeed(PID_val > 0 ? motor_maxspeed - 50 : -(motor_maxspeed - 50));
         // stepper->setSpeed(PID_val);
         stepper->run();
-    } else 
-    
-    if ((PID_val > 10 || PID_val < -10) && (error_p > 0 || error_p < -0)) { // Mpve towards the target
+    }
+    else
+
+        if ((PID_val > 10 || PID_val < -10) && (error_p > 0 || error_p < -0))
+    { // Mpve towards the target
         stepper->setSpeed(PID_val);
         stepper->run();
-    } else { // This is for if we have reached it
+    }
+    else
+    { // This is for if we have reached it
         stepper->stop();
     }
 

@@ -24,7 +24,7 @@ from planner_utils import *
 PATH_RAD = 0.13
 
 # center point for path circle
-ORIGIN = np.array([0.88, 0.3007, 0.23])
+ORIGIN = np.array([0.84, 0.3007, 0.23])
 
 # (aproximate) bounding box for reachable locations
 UPPER_BOUNDS = np.array([1.019, 0.2167, 0.2452])
@@ -37,9 +37,9 @@ posePub = None
 jointPub = None
 
 
-HOME = [0.05, 0.0845, 0, 0, 0, 0]
-REF_LEFT = [0.05, 0, 0, 0, 0, 0]
-REF_RIGHT = [0.05, 0.169, 0, 0, 0, 0]
+HOME = [-0.05, 0.0845, -0.01, 0, 0, 0]
+REF_LEFT = [-0.05, 0, -0.01, 0, 0, 0]
+REF_RIGHT = [-0.05, 0.169, -0.01, 0, 0, 0]
 
 # Listener callback
 def callback(message):
@@ -96,6 +96,7 @@ def trajectory_builder(path):
         
         traj.joint_trajectory.points.append(curr_point)
 
+    print("Trajectory:")
     print(traj)
     return traj
     

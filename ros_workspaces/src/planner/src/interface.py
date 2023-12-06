@@ -9,7 +9,7 @@ from sensor_msgs.msg import JointState
 from moveit_msgs.msg import RobotTrajectory
 from trajectory_msgs.msg import JointTrajectoryPoint
 from sensor_msgs.msg import JointState
-from geometry_msgs.msg import Pose, PoseArray
+from geometry_msgs.msg import Pose, PoseArray, WrenchStamped
 from moveit_commander import MoveGroupCommander
 
 
@@ -18,16 +18,16 @@ from moveit_commander import MoveGroupCommander
 # Origins and limits from URDF file
 limits = np.array([-0.3, 0.169, -0.137, -3.14, -3.14, -3.14])
 
-scale = np.array([10, 20, 20, 1, 1, 1])
 pub = None
 
 idle = True
 simulated = False
+critical_state = False
 
 LIMIT = 500
 
-# Listener callback
-def callback(message):
+# Listener callback for path planning
+def Path_callback(message):
     global idle
     idle = False
 
@@ -41,19 +41,37 @@ def callback(message):
     print("Finished executing Path")
     idle = True
 
+# Listener callback for entering a critical state
+def FTSensor_callback(message):
+    print("inhere")
+    print(message)
+
           
 def operate_path(trajectory):
     waypoints = trajectory.joint_trajectory.points
-    for i in range(4):
+    
+    # move to prepare movement
+    for i in range(3):
         movegroup(waypoints[i].positions)
-        
-    input('Press [ Enter ] to return')
-    for i in range(4):
-        movegroup(waypoints[i + 3].positions)
+    
+    # Approach the head
+    
+    input('Press [ Enter ] to approach head')
+    send_data('c', type = 1) 
+    rospy.sleep(0.5)
+    movegroup_critical(waypoints[3].positions, lim = 50)
+    rospy.sleep(0.5)
+    
+    
+    # Return to home
+    input('Press [ Enter ] to return home')
+    send_data('s', type = 1)
+    for i in range(3):
+        movegroup(waypoints[i + 4].positions)
         
     
 # Move robot to a certain point
-def movegroup(current_target):
+def movegroup(current_target, lim = LIMIT):
     send_pose(current_target)
     
     if simulated :
@@ -67,8 +85,27 @@ def movegroup(current_target):
             push_states(deconv_values(encoder_angles))
             
             refval = np.linalg.norm(convert_values(np.array(current_target)) - np.array(encoder_angles) )
-            if refval < LIMIT:
-                print("Reached Waypoint!")
+            if refval < lim:
+                # print("Reached Waypoint!")
+                break
+
+# Move robot to a certain point with critical conditions
+def movegroup_critical(current_target, lim = LIMIT):
+    send_pose(current_target)
+    
+    if simulated :
+        time.sleep(1)
+    
+    while not simulated:
+        read_val = str(STM.readline().decode('utf-8'))
+        encoder_angles = parse_input(read_val)
+            
+        if len(encoder_angles) == 6:
+            push_states(deconv_values(encoder_angles))
+            
+            refval = np.linalg.norm(convert_values(np.array(current_target)) - np.array(encoder_angles) )
+            if refval < lim:
+                # print("Reached Waypoint!")
                 break
 
 
@@ -84,7 +121,10 @@ def send_pose(joint_values):
 def listener():
     global pub
     pub = rospy.Publisher('joint_states', JointState, queue_size=10)
-    rospy.Subscriber("TMS/trajectory", RobotTrajectory, callback)
+    
+    rospy.Subscriber("wireless_ft/wrench_1", WrenchStamped, FTSensor_callback)
+    rospy.Subscriber("TMS/trajectory", RobotTrajectory, Path_callback)
+    
     while not rospy.is_shutdown():
         # Read Data
         if not simulated and STM.isOpen() and idle:
@@ -101,11 +141,13 @@ def parse_input(read_val):
         pr_data = str(read_val[1:-3])
         try:
             angles = [int(i) for i in pr_data.split(" ")]
+            # print("   [STM]:", angles)
             return angles
         except:
             print("failed split")
+    else:
+        print("   [STM]:", read_val[:-1])
     return []
-
 
 
 
@@ -118,7 +160,7 @@ def push_states(angles):
     
     
 def convert_values(joint_values):  
-    angles = np.clip(np.around(10000 * joint_values/limits), 0, 10000)
+    angles = np.around(10000 * joint_values/limits)
     joints = np.array([angles[0], angles[1], angles[2], angles[3], 0, 0])
     joints[4] = int((-angles[4] + angles[5])/2)
     joints[5] = int((angles[4] + angles[5])/2)
@@ -133,12 +175,20 @@ def deconv_values(encoder_input):
     angles[5] = (joints[4] + joints[5])
     return np.array(angles)
     
-    
-def send_data(joints):
-    print("Sending Positions:", joints)
+
+# Send data to the STM32. There are different data types:
+#   0: Joint position data
+#   1: State data
+
+def send_data(info, type = 0):
+    # print("Sending Positions:", joints)
     # Send to microcontroller
-    str_send = "p" + str(joints)[1:-1] + "\n"
-    STM.write(str_send.encode("utf-8"))
+    if type == 0:
+        str_send = "p" + str(info)[1:-1] + "\n"
+        STM.write(str_send.encode("utf-8"))
+    if type == 1:
+        str_send = "s" + info + "\n"
+        STM.write(str_send.encode("utf-8"))
 
 
 

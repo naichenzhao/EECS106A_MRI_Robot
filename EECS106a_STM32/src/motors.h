@@ -9,6 +9,9 @@ void homeMotors();
 void set_motors(long positions[]);
 void run_motors();
 
+void enterStandardState();
+void enterCriticalState();
+
 void set_x_motor(int pos);
 void set_y_motor(int pos);
 void set_z_motor(int pos);

@@ -17,9 +17,8 @@ int counter = 0;
 //  | Global Functions
 //  + -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- - +
 void set_positions(String ser_read);
+void change_state(String ser_read) ;
 void print_encoders();
-
-
 
 //  + -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- - +
 //  | Run setup
@@ -27,15 +26,15 @@ void print_encoders();
 void setup() {
   Serial.begin(115200);
   Serial.println("---- Starting Setup ---- ");
+  // Setup any other ports
+  pinMode(13, OUTPUT);
   delay(2000);
 
   setupMotors(); // Setup stepper motors
   setupEncoders(); // setup encoders
   homeMotors(); // home the motors
-  
-
-  // Setup any other ports
-  pinMode(13, OUTPUT);
+  enterStandardState(); // set speed to that of the standard state
+  // enterCriticalState(); // set speed to that of the critical state state
 
   Serial.println("---- Finished Setup ---- ");
 }
@@ -51,12 +50,14 @@ void loop() {
 
     // Flush the serial port just incase
     Serial.flush();
-
     char ind = ser_read.charAt(0);
 
     switch (ind) {
     case 'p':
       set_positions(ser_read.substring(1));
+      break;
+    case 's':
+      change_state(ser_read.substring(1));
       break;
     }
 
@@ -65,19 +66,13 @@ void loop() {
     Serial.println(ind);
   }
 
-
   // Everything should be printed in here as to not interfere with stepper motors
   if (counter >= 4000) {
     print_encoders();
     counter = 0;
   }
   counter ++;
- 
-  // Serial.println(digitalRead(PA0));
-  // delay(100);
-
   run_motors();
-  // Serial.println("   ");
 }
 
 
@@ -93,6 +88,19 @@ void print_encoders() {
     Serial.print(" ");
   }
   Serial.println("");
+}
+
+void change_state(String ser_read) {
+  if (ser_read.charAt(0) == 'c') {
+    enterCriticalState();
+    Serial.println("Entering critical state");
+  } else if (ser_read.charAt(0) == 's') {
+    enterStandardState();
+    Serial.println("Entering standard state");
+  } else {
+    Serial.println(ser_read);
+  }
+
 }
 
 void set_positions(String ser_read) {
