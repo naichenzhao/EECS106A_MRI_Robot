@@ -20,6 +20,11 @@ global_points = np.array([])
 global_normals = np.array([])
 clicked = False
 pub = rospy.Publisher('TMS/head_target', Pose, queue_size=10)
+#4x4 homogenous matrix, from world frame to body frame
+homogenous_matrix = np.array([[0.0, 0.0, -1, 0.84],
+                              [1, 0.0, 0.0, 0.3007],
+                              [0.0, -1, 0.0, 0.23],
+                              [0.0, 0.0, 0.0, 1.0]])
 
 
 class InteractivePlot(QMainWindow):
@@ -98,6 +103,12 @@ def usr_input(pub):
     #cast to float
         pos = (global_points * scaling_factor)
         vec = (global_normals)
+
+        #transform to world frame
+        pos = np.matmul(homogenous_matrix, np.append(pos, 1))
+
+        vec = np.matmul(homogenous_matrix, np.append(vec, 0))
+        
         print(pos)
         print(vec)
 
