@@ -1,10 +1,6 @@
-# TODO:
-# 1)read all the normals and points from CSV instead of recalculating them
-# 2)start the gui
-# 3) read the target from the gui
-# 4) publish the selected normal to the head_pub
 #!/usr/bin/env python
 import rospy
+import os
 from geometry_msgs.msg import *
 import numpy as np
 from scipy.spatial.transform import Rotation as R
@@ -16,8 +12,14 @@ import matplotlib.pyplot as plt
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from mpl_toolkits.mplot3d import proj3d
 
+stl_dimensions = [0.08024935, 0.10076117, 0.11059876] #in meters
+#Minimum values for each column: [-34.263749225768464, -51.01442793534265, 0.012813402258831522]
+#Maximum values for each column: [42.177958349799546, 48.23456001281738, 110.36154221754808]
+scaling_factor = .23/110.34872881528925
 global_points = np.array([])
 global_normals = np.array([])
+clicked = False
+pub = rospy.Publisher('TMS/head_target', Pose, queue_size=10)
 
 
 class InteractivePlot(QMainWindow):
@@ -43,11 +45,12 @@ class InteractivePlot(QMainWindow):
 
         # Connect the mouse click event
         self.canvas.mpl_connect('button_press_event', self.on_click)
-
         self.show()
+        #publisher()
 
     def on_click(self, event):
-
+        global global_points
+        global global_normals
         if event.inaxes != self.ax:
             return
 
@@ -76,41 +79,37 @@ class InteractivePlot(QMainWindow):
 
         # Re-draw the plot
         self.canvas.draw()
-        global_points = self.points
-        global_normals = self.normals
-        print(f"Closest point: {closest_point}, Normal: {closest_normal}")
-
-
-def publisher():
-    pub = rospy.Publisher('head_sel', Head, queue_size=10)
-
-    print("============ STARTING TEST ============ ")
-    while not rospy.is_shutdown():
-        usr_input(pub)
+        global_points = closest_point
+        global_normals = closest_normal
+        if not rospy.is_shutdown():
+            usr_input(pub)
+        #print("clicked")
+        #print(f"Closest point: {closest_point}, Normal: {closest_normal}")
+    
 
 
 def usr_input(pub):
     # TODO: read the target from the gui
     # usr_pos = input("Please insert the position:   ")
-    try:
-        # Interactive GUI
-        app = QApplication(sys.argv)
-        # load from python binary file
-        saved_reduced_points = np.load('points.npy')
-        saved_normals = np.load('normals.npy')
-        ex = InteractivePlot(saved_reduced_points, saved_normals)
-        # ex = InteractivePlot(reduced_points, normals)
-        sys.exit(app.exec_())
+    
 
-        vals = np.array([float(i) for i in usr_input.split(", ")])
-        pos = global_points
-        vec = global_normals
+    #vals = np.array([float(i) for i in usr_input.split(", ")])
+    try:
+    #cast to float
+        pos = (global_points * scaling_factor)
+        vec = (global_normals)
         print(pos)
         print(vec)
 
-        msg = Float32MultiArray()
-
-        msg.data = np.concatenate((pos, vec)).tolist()
+        msg = Pose()
+        # Set pose position
+        msg.position.x = pos[0]
+        msg.position.y = pos[1]
+        msg.position.z = pos[2]
+        # set pose orientation
+        msg.orientation.x = vec[0]
+        msg.orientation.y = vec[1]
+        msg.orientation.z = vec[2]
 
         print("Message Send:",  msg, "\n")
         pub.publish(msg)
@@ -124,6 +123,14 @@ if __name__ == '__main__':
     # rospy.sleep(3) #wait for 3 seconds
 
     try:
-        publisher()
+        # InteractivePlot()
+        print("============ STARTING TEST ============ ")
+        app = QApplication(sys.argv)
+        # load from python binary file
+        path = os.getcwd()
+        saved_reduced_points = np.load(path+'/src/head_gui/src/points.npy')
+        saved_normals = np.load(path+'/src/head_gui/src/normals.npy')
+        ex = InteractivePlot(saved_reduced_points, saved_normals)
+        sys.exit(app.exec_())
     except rospy.ROSInterruptException:
         pass
