@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <!-- Standard stuff -->
+    <meta charset="utf-8" \>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+    <title>MRI Robot</title>
+
+    <!-- Metadata -->
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="" \>
+    <meta name="description" content="UC Berkeley EECS C106A Fall 2023 Project Report" \>
+
+    <!-- Style info -->
+    <link rel="stylesheet" href="website/styles/styles.css" />
+    <script src="website/scripts/scripts.js"></script>
+</head>
+
+<body>
+    <div class="main">
+        <h1> EE106A Fall 2023 Final Project</h1>
+        <h2> Group 35 - MRI Robot </h2>
+        <p> David Guo, Nai Chen Zhao, Wesley Jiang, Cedric Murphy, Charles Paxson </p>
+        <div class="section" id="introduction">
+            <h2> Introduction </h2>
+            <p> Transcranial Magnetic Stimulation (TMS) is a procedure that uses powerful magnetic fields emitted from a handheld coil to stimulate certain areas of the brain.  It has been found to have positive effects on patients with depression and obsessive-compulsive disorders.</p>
+            <p> However, the exact biology of TMS is not very well understood.  Our robot is intended to help study TMS and its effects on the brain by allowing it to be conducted repeatably within an MRI machine, so imagery can be taken immediately following the stimulation. </p>
+            <p>  </p>
+        </div>
+        <div class="section" id="design">
+            <h2> Design </h2>
+            <p> Our robot must be able to move a TMS coil into light contact with a human head, within an MRI machine.</p>
+            <p> In doing so, it must be reliable, safe, and easy for the therapist conducting TMS to control.</p>
+            <p> Since this robot will work within an MRI machine, it cannot have any ferromagnetic materials.  However, this project is simply a prototype to test the overall architecture, so there are several ferromagnetic components</p>
+            <div class="subsection" id="hardware-design">
+                <h3> Hardware </h3>
+                <p> We designed a 6-axis robot, composed of two main assemblies: a 3 axis Cartesian gantry, and a 3 axis rotating end effector.</p>
+            </div>
+            <div class="subsection" id="electrical-design">
+                <h3> Electrical </h3>
+                <p> Since we are just working on a prototype, we decided to drive our robot with stepper motors, since they are precise and easy to use.</p>
+            </div>
+        </div>
+        <div class="section" id="implementation">
+            <h2> Implementation </h2>
+            <div class="subsection" id="hardware-implementation">
+                <h3> Hardware </h3>
+                <p> blah</p>
+            </div>
+            <div class="subsection" id="electrical-implementation">
+                <h3> Electrical </h3>
+                <p> blah</p>
+            </div>
+            <div class="subsection" id="software-implementation">
+                <h3> Software </h3>
+                <p> blah</p>
+            </div>
+        </div>
+        <div class="section", id="results"> 
+            <h2> Results </h2>
+        </div>
+        <div class="section", id="conclusion"> 
+            <h2> Conclusion </h2>
+        </div>
+        <div class="section", id="team"> 
+            <h2> Team </h2>
+        </div>
+        <div class="section", id="additional-materials"> 
+            <h2> Additional Materials </h2>
+        </div>
+    </div>
+    <div class="sidebar">
+        <ul id="toc">
+            <li><a class="toc-section" href="#introduction">Introduction</a></li>
+            <li><a class="toc-section" href="#design">Design</a></li>
+                <li><a class="toc-subsection" href="#hardware-design">Hardware</a></li>
+                <li><a class="toc-subsection" href="#electrical-design">Electrical</a></li>
+                <li><a class="toc-subsection" href="#software-design">Software</a></li>
+            <li><a class="toc-section" href="#implementation">Implementation</a></li>
+                <li><a class="toc-subsection" href="#hardware-implementation">Hardware</a></li>
+                <li><a class="toc-subsection" href="#electrical-implementation">Electrical</a></li>
+                <li><a class="toc-subsection" href="#software-implementation">Software</a></li>
+            <li><a class="toc-section" href="#results">Results</a></li>
+            <li><a class="toc-section" href="#conclusion">Conclusion</a></li>
+            <li><a class="toc-section" href="#team">Team</a></li>
+            <li><a class="toc-section" href="#additional-materials">Additional Materials</a></li>
+        </ul>
+    </div>
+    <footer id="footer">
+    <a href="https://github.com/naichenzhao/EECS106A_Project" target="_blank" id="github-link">
+        <span id="github-text">GitHub</span>
+        <img src="website/images/github_logo.png" alt="Github" id="github-icon">
+    </a>
+</footer>
+</body>
+
+</html>
