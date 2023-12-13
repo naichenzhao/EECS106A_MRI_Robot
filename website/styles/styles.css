@@ -1,6 +1,6 @@
 @import url('https://fonts.googleapis.com/css?family=Quicksand');
 
-html,body,p,h1,h2,h3 {
+html,body,p,h1,h2,h3, h4 {
     /* color: white; */
     font-family: Quicksand;
     margin: 0;
@@ -32,10 +32,15 @@ body {
     --text: #FFFFFF;
     --accent: #ffbf00;
     --accent-accent: #ffd65e;
-    --link-text: #5555ff;
+    --link-text: #8989ec;
     /* background-color:var(--bg); */
     min-height: 100vh;
     background: var(--bg);
+}
+
+a {
+    color: var(--link-text);
+    text-decoration: none;
 }
 
 .main {
@@ -105,7 +110,7 @@ body {
     }
 
 #head_gui_plot {
-    width:100%;
+    width:50%;
     aspect-ratio: 1;
     margin: auto;
 }

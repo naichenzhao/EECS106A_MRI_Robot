@@ -69,6 +69,23 @@
             <div class="subsection" id="software-design"> 
                 <h3> Software </h3>
                 <img src="website/images/software-architecture.png" alt="Software architecture flowchart" class="picture center">
+                <h4> Controller </h4>
+                <p> Runs ROS Noetic on a Ubuntu 20.04 VM. There are five main nodes: </p>
+                <ul>
+                    <li> Head GUI </li>
+                    <li> OptiTrack Receiver </li>
+                    <li> Path planner </li>
+                    <li> STM32 Interface </li>
+                    <li> Force/Torque Receiver </li>
+                </ul>
+                <p> The Head GUI will publish a point cloud, and a selected point.  This data is passed through a TF transform obtained from the OptiTrack node, where the now-transformed point is sent to the path planner, and the point cloud is displayed on RViz. </p>
+
+                <p> The path planner is the most important node.  It takes in sensor data, the desired input, calculates a path, then uses MoveIt to determine the required joint angles.  Finally, it displays that plan on RViz for the user to confirm the trajectory, upon which it will be sent to the low-level controller through the STM32 interface node. </p>
+                
+                <h4> Low-level Controller </h4>
+                <p> The low-level controller runs entirely on the STM32.  It takes in UART commands over USB to drive the motors. </p>
+                <p> For the three prismatic joints of the Cartesian gantry, it runs a PID controller for each motor since those joints have functional encoders (It isn't strictly necessary on the Z axis since it has a lead screw instead of easy to back-drive belts that are on the X and Y axes) </p>
+                <p> For the three revolute joints, it just runs the motors in open-loop since the gear reductions on those joints are relatively high so backdriving is unlikely. </p>
             </div>
         </div>
         <div class="section" id="implementation">
@@ -109,7 +126,7 @@
                     </div>
                     <div class="carousel-card">
                         <img src="website/images/mechanical_implementation/wesley_mount.jpg" alt="Mannequin bracket" class="carousel-image picture">
-                        <div class="carousel-caption"> "Wesley" mount with OptiTrack markers (our mannequin head is named Wesley because Wesley wasn't there when we named it) </div>
+                        <div class="carousel-caption"> "Wesley" mount with OptiTrack markers (our mannequin head is named Wesley because <i>true</i> Wesley wasn't there when we named it) </div>
                     </div>
                     <div class="carousel-card">
                         <img src="website/images/mechanical_implementation/trimetric_back.jpg" alt="Gantry Assembly" class="carousel-image picture">
@@ -131,11 +148,13 @@
             <div class="subsection" id="software-implementation">
                 <h3> Software </h3>
                 <h4> Head GUI </h4>
-                <p> A python GUI allows a user to select head zones.  This ran independently of RVIZ.  Not all points on the head are selectable since the back half is unreachable.  An even point density cloud was achieved with voxel down-sampling.  The GUI transforms the head normal vectors and points to the world frame and publishes them. </p>
                 <img src="website/images/head_gui_demo.gif" alt="Head GUI demo" class="picture center" id="demo-animation">
+                <p> A python GUI allows a user to select head zones.  This ran independently of RVIZ.  Not all points on the head are selectable since the back half is unreachable.  An even point density cloud was achieved with voxel down-sampling.  The GUI transforms the head normal vectors and points to the world frame and publishes them. </p>
                 <div id="head_gui_plot"></div>
-                <i class="caption"> Point cloud data shown with Plotly.js instead of Matplotlib we're using with ROS. </i>
-
+                <i class="caption"> Point cloud data shown with Plotly.js instead of Matplotlib, which we use with ROS. </i>
+                <h4> Path Planner </h4>
+                <h4> STM32 Interface </h4>
+                <h4> STM32 Firmware </h4>
             </div>
         </div>
         <div class="section", id="results"> 
@@ -215,10 +234,30 @@
             <p><code>website</code> - Website assets</p>
         </div>
         <div class="subsection", id="credits">
-            <h3> Credits</h3>
+            <h3> Credits/Thanks</h3>
+            <h4>Project</h4>
+            <ul>
+                <li>Everyone in the Biomimetics Millisystems Laboratory.  In particular:</li>
+                    <ul>
+                        <li> Binghan He </li>
+                        <li> Sareum Kim </li>
+                        <li> Martin Zeng </li>
+                        <li> Daniel Dapula </li>
+                        <li> Ronald Fearing </li>
+                    </ul>
+                <li>EECS C106A Staff</li>
+                <li> TAMS Group - created a <a href="https://github.com/TAMS-Group/tams_wireless_ft">ROS node to interface with the ATI-IA Wireless F/T system</a></li>
+                <li> ROS Packages </li>
+                    <ul>
+                        <li> <a href="https://moveit.ros.org/">MoveIt</a> </li>
+                        <li> <a href="https://wiki.ros.org/rviz">RViz</a> </li>
+                        <li> <a href="https://wiki.ros.org/vrpn_client_ros">vrpn_client_ros</a> </li>
+                    </ul>
+            </ul>
             <h4>Website</h4>
             <ul>
                 <li> Image slideshow code - <a href="https://www.w3schools.com/howto/howto_js_slideshow.asp">W3Schools</a></li>
+                <li> <a href="https://plotly.com/javascript/">Plotly Javascript library</a> </li>
             </ul>
         </div>
     </div>
