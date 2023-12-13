@@ -15,6 +15,8 @@
 
     <!-- Style info -->
     <link rel="stylesheet" href="website/styles/styles.css" />
+    <script src='https://cdn.plot.ly/plotly-2.27.0.min.js'></script>
+	<script src='https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js'></script>
     <script src="website/scripts/scripts.js"></script>
 </head>
 
@@ -27,7 +29,7 @@
             <h2> Introduction </h2>
             <p> Transcranial Magnetic Stimulation (TMS) is a procedure that uses powerful magnetic fields emitted from a handheld coil to stimulate certain areas of the brain.  It has been found to have positive effects on patients with depression and obsessive-compulsive disorders.</p>
             <p> However, the exact biology of TMS is not very well understood.  Our robot is intended to help study TMS and its effects on the brain by allowing it to be conducted repeatably within an MRI machine, so imagery can be taken immediately following the stimulation. </p>
-            <p>  </p>
+            <p> Since this robot will be able to function around an MRI machine, it could be used for other research and procedures relating to the brain. </p>
         </div>
         <div class="section" id="design">
             <h2> Design </h2>
@@ -36,26 +38,57 @@
             <p> Since this robot will work within an MRI machine, it cannot have any ferromagnetic materials.  However, this project is simply a prototype to test the overall architecture, so there are several ferromagnetic components</p>
             <div class="subsection" id="hardware-design">
                 <h3> Hardware </h3>
+                <h4> Design Overview </h4>
                 <p> We designed a 6-axis robot, composed of two main assemblies: a 3 axis Cartesian gantry, and a 3 axis rotating end effector.</p>
+                <img src="website/images/robot_cad.png" alt="Robot CAD image" class="picture center">
+                <p> The rotating end effector then has two parts: a rotation joint and a two-axis differential wrist joint.  We use this differential joint instead of discreetly actuating the pitch and yaw axes to make one motor move less, and to make the end effector more compact. </p>
+                <img src="website/images/differential_joint.png" alt="Differential joint image" class="picture center">
+                <div class="picture-container">
+                    <div>
+                        <p> Each of the prismatic joints is belt-driven directly by the stepper motors. </p>
+                        <p> The rotating joint (roll) connecting the gantry to the wrist has a worm drive. </p>
+                        <p> The wrist joint has 2 axes, each driven by a pancake stepper motor with a 15:1 3D printed cycloidal drive.  These drives have custom bearings with nylon balls running in 3D printed races. </p>
+                        <p> These drive timing belts that move the two sides of a bevel gear differential, upon which is mounted our force/torque sensor and end effector. </p>
+                    </div>
+                    <img src="website/images/cycloidal_drive_cad.png" alt="Cycloidal drive image" class="picture contained-picture">
+                </div>
+                <h4> Design Choices and Trade-offs </h4>
+                <p> When we began this project, the Cartesian gantry had already been bought, and unfortunately its range of motion was rather lacking.  We had to offset the wrist joint from the rotation joint to give us a usable reachable workspace that would let us reach either side of an adult human's head.  We also had to cut down the workspace, so the arm can only either reach the front half of a person's head, and the back half, with the patient simply be turned over on the tray to reach the other side. </p>
+                <p> Additionally, the gantry we ultimately received lacked a couple of key components, most importantly the rotation joint.  It was shipped later, but it did not have any kind of motor mount, so we just designed our own. </p>
+                <p> Finally, we got a prototype of the wrist arm made of acetal, and we noticed that with the NEMA 23 motors we originally planned to use, that bending was a concern.  To solve this, we remade the wrist arm with acrylic, and designed 3D printed cycloidal drives that would allow us to use 50mm pancake stepper motors instead that were much lighter. </p>
             </div>
             <div class="subsection" id="electrical-design">
                 <h3> Electrical </h3>
-                <p> Since we are just working on a prototype, we decided to drive our robot with stepper motors, since they are precise and easy to use.</p>
+                <div class="picture-container">
+                    <div>
+                        <p> Since we are just working on a prototype, we decided to drive our robot with stepper motors, since they are precise and easy to use.</p>
+                        <p> To make the wiring between the encoders, motor drivers, and microcontroller simpler, we designed a custom PCB with a socket to directly plug in the STM32 Nucleo microcontroller.  It manages power conversions from 12V to 5V and 3.3V.  It greatly simplifies wiring and minimizes harnessing issues.  Each stepper motor can be disabled separately with SPST switches on the right. </p>
+                    </div>
+                    <img src="website/images/pcb_cad.png" alt="PCB image" class="picture center">
+                </div>
             </div>
         </div>
         <div class="section" id="implementation">
             <h2> Implementation </h2>
             <div class="subsection" id="hardware-implementation">
                 <h3> Hardware </h3>
-                <p> blah</p>
+                <p> blah </p>
             </div>
             <div class="subsection" id="electrical-implementation">
                 <h3> Electrical </h3>
+
                 <p> blah</p>
             </div>
             <div class="subsection" id="software-implementation">
                 <h3> Software </h3>
+                <img src="website/images/software-architecture.png" alt="Software architecture flowchart" class="picture center">
                 <p> blah</p>
+                <h4> Head GUI </h4>
+                <p> A python GUI allows a user to select head zones.  This ran independently of RVIZ.  Not all points on the head are selectable since the back half is unreachable.  An even point density cloud was achieved with voxel down-sampling.  The GUI transforms the head normal vectors and points to the world frame and publishes them. </p>
+                <img src="website/images/head_gui_demo.gif" alt="Head GUI demo" class="picture center" id="demo-animation">
+                <div id="head_gui_plot"></div>
+                <i class="caption"> Point cloud data shown with Plotly.js instead of Matplotlib we're using with ROS. </i>
+
             </div>
         </div>
         <div class="section", id="results"> 
@@ -95,5 +128,4 @@
     </a>
 </footer>
 </body>
-
 </html>
