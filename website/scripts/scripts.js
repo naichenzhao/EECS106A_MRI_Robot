@@ -16,8 +16,8 @@ window.addEventListener('scroll', function() {
     });
 });
 
-const csv_path = '/ros_workspaces/src/head_gui/src/points.csv';
-// const csv_path = 'https://raw.githubusercontent.com/naichenzhao/EECS106A_Project/main/ros_workspaces/src/head_gui/src/points.csv?token=GHSAT0AAAAAACBB4JT7VLYBQMCGI4OIDZUMZLZ3IRQ';
+// const csv_path = '/ros_workspaces/src/head_gui/src/points.csv';
+const csv_path = 'https://raw.githubusercontent.com/naichenzhao/EECS106A_Project/main/ros_workspaces/src/head_gui/src/points.csv';
 
 d3.csv(csv_path, function(err, rows){
 function unpack(rows, key) {
@@ -46,3 +46,31 @@ var layout = {margin: {
 Plotly.newPlot('head_gui_plot', data, layout);
 });
 
+let slideIndex = 1;
+showSlides(slideIndex);
+
+// Next/previous controls
+function plusSlides(n) {
+  showSlides(slideIndex += n);
+}
+
+// Thumbnail image controls
+function currentSlide(n) {
+  showSlides(slideIndex = n);
+}
+
+function showSlides(n) {
+  let i;
+  let slides = document.getElementsByClassName("carousel-card");
+  let dots = document.getElementsByClassName("dot");
+  if (n > slides.length) {slideIndex = 1}
+  if (n < 1) {slideIndex = slides.length}
+  for (i = 0; i < slides.length; i++) {
+    slides[i].style.display = "none";
+  }
+  for (i = 0; i < dots.length; i++) {
+    dots[i].className = dots[i].className.replace(" active", "");
+  }
+  slides[slideIndex-1].style.display = "block";
+  dots[slideIndex-1].className += " active";
+}

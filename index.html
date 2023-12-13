@@ -17,7 +17,6 @@
     <link rel="stylesheet" href="website/styles/styles.css" />
     <script src='https://cdn.plot.ly/plotly-2.27.0.min.js'></script>
 	<script src='https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js'></script>
-    <script src="website/scripts/scripts.js"></script>
 </head>
 
 <body>
@@ -40,18 +39,14 @@
                 <h3> Hardware </h3>
                 <h4> Design Overview </h4>
                 <p> We designed a 6-axis robot, composed of two main assemblies: a 3 axis Cartesian gantry, and a 3 axis rotating end effector.</p>
-                <img src="website/images/robot_cad.png" alt="Robot CAD image" class="picture center">
+                <img src="website/images/design/robot_cad.png" alt="Robot CAD image" class="picture center">
                 <p> The rotating end effector then has two parts: a rotation joint and a two-axis differential wrist joint.  We use this differential joint instead of discreetly actuating the pitch and yaw axes to make one motor move less, and to make the end effector more compact. </p>
-                <img src="website/images/differential_joint.png" alt="Differential joint image" class="picture center">
-                <div class="picture-container">
-                    <div>
-                        <p> Each of the prismatic joints is belt-driven directly by the stepper motors. </p>
-                        <p> The rotating joint (roll) connecting the gantry to the wrist has a worm drive. </p>
-                        <p> The wrist joint has 2 axes, each driven by a pancake stepper motor with a 15:1 3D printed cycloidal drive.  These drives have custom bearings with nylon balls running in 3D printed races. </p>
-                        <p> These drive timing belts that move the two sides of a bevel gear differential, upon which is mounted our force/torque sensor and end effector. </p>
-                    </div>
-                    <img src="website/images/cycloidal_drive_cad.png" alt="Cycloidal drive image" class="picture contained-picture">
-                </div>
+                <img src="website/images/design/differential_joint.png" alt="Differential joint image" class="picture center">
+                <p> Each of the prismatic joints is belt-driven directly by the stepper motors. </p>
+                <p> The rotating joint (roll) connecting the gantry to the wrist has a worm drive. </p>
+                <p> The wrist joint has 2 axes, each driven by a pancake stepper motor with a 15:1 3D printed cycloidal drive.  These drives have custom bearings with nylon balls running in 3D printed races. </p>
+                <img src="website/images/design/cycloidal_drive_cad.png" alt="Cycloidal drive image" class="picture center">
+                <p> These drive timing belts that move the two sides of a bevel gear differential, upon which is mounted our force/torque sensor and end effector. </p>
                 <h4> Design Choices and Trade-offs </h4>
                 <p> When we began this project, the Cartesian gantry had already been bought, and unfortunately its range of motion was rather lacking.  We had to offset the wrist joint from the rotation joint to give us a usable reachable workspace that would let us reach either side of an adult human's head.  We also had to cut down the workspace, so the arm can only either reach the front half of a person's head, and the back half, with the patient simply be turned over on the tray to reach the other side. </p>
                 <p> Additionally, the gantry we ultimately received lacked a couple of key components, most importantly the rotation joint.  It was shipped later, but it did not have any kind of motor mount, so we just designed our own. </p>
@@ -59,30 +54,82 @@
             </div>
             <div class="subsection" id="electrical-design">
                 <h3> Electrical </h3>
-                <div class="picture-container">
-                    <div>
-                        <p> Since we are just working on a prototype, we decided to drive our robot with stepper motors, since they are precise and easy to use.</p>
-                        <p> To make the wiring between the encoders, motor drivers, and microcontroller simpler, we designed a custom PCB with a socket to directly plug in the STM32 Nucleo microcontroller.  It manages power conversions from 12V to 5V and 3.3V.  It greatly simplifies wiring and minimizes harnessing issues.  Each stepper motor can be disabled separately with SPST switches on the right. </p>
-                    </div>
-                    <img src="website/images/pcb_cad.png" alt="PCB image" class="picture center">
-                </div>
+                <p> Since we are just working on a prototype, we decided to drive our robot with stepper motors, since they are precise and easy to use.</p>
+                <p> To make the wiring between the encoders, motor drivers, and microcontroller simpler, we designed a custom PCB with a socket to directly plug in the STM32 Nucleo microcontroller.  It manages power conversions from 24V to 5V and 3.3V.  It greatly simplifies wiring and minimizes harnessing issues.</p>
+                <img src="website/images/design/pcb_cad.png" alt="PCB image" class="picture center">
+                <p> It has five main features for each motor: </p>
+                <ul>
+                    <li> A STEP/DIR/ENA interface to each stepper driver </li>
+                    <li> A quadrature encoder interface </li>
+                    <li> A limit switch interface </li>
+                    <li> A ENA switch to toggle individual motors </li>
+                    <li> A XT-60 connector for power to stepper drivers. (this connector has a 60A rating and we will draw at most 1A at 24V) </li>
+                </ul>
+            </div>
+            <div class="subsection" id="software-design"> 
+                <h3> Software </h3>
+                <img src="website/images/software-architecture.png" alt="Software architecture flowchart" class="picture center">
             </div>
         </div>
         <div class="section" id="implementation">
             <h2> Implementation </h2>
             <div class="subsection" id="hardware-implementation">
                 <h3> Hardware </h3>
-                <p> blah </p>
+                <p> The manufacturing and assembly processes were fairly straightforward on the mechanical side. </p>
+                <div style="text-align:center">
+                    <span class="dot" onclick="currentSlide(1)"></span>
+                    <span class="dot" onclick="currentSlide(2)"></span>
+                    <span class="dot" onclick="currentSlide(3)"></span>
+                    <span class="dot" onclick="currentSlide(4)"></span>
+                    <span class="dot" onclick="currentSlide(5)"></span>
+                    <span class="dot" onclick="currentSlide(6)"></span>
+                    <span class="dot" onclick="currentSlide(7)"></span>
+                </div>
+                <br>
+                <div class="carousel">
+                    <div class="carousel-card">
+                        <img src="website/images/mechanical_implementation/trimetric_front.jpg" alt="Gantry assembly" class="carousel-image picture">
+                        <div class="carousel-caption"> Front Trimetric View </div>
+                    </div>
+                    <div class="carousel-card">
+                        <img src="website/images/mechanical_implementation/differential_joint.jpg" alt="Differential joint" class="carousel-image picture">
+                        <div class="carousel-caption"> Differential Joint with Limit Switches </div>
+                    </div>
+                    <div class="carousel-card">
+                        <img src="website/images/mechanical_implementation/cycloidal_drive.jpg" alt="Cycloidal drive" class="carousel-image picture">
+                        <div class="carousel-caption"> Mounted Cycloidal Drive </div>
+                    </div>
+                    <div class="carousel-card">
+                        <img src="website/images/mechanical_implementation/rotation_joint.jpg" alt="Rotation Joint" class="carousel-image picture">
+                        <div class="carousel-caption"> Rotation Joint with Motor Mount and Limit Switch </div>
+                    </div>
+                    <div class="carousel-card">
+                        <img src="website/images/mechanical_implementation/arm_offset.jpg" alt="Wrist offset mount" class="carousel-image picture">
+                        <div class="carousel-caption"> Wrist Arm Offset Mount </div>
+                    </div>
+                    <div class="carousel-card">
+                        <img src="website/images/mechanical_implementation/wesley_mount.jpg" alt="Mannequin bracket" class="carousel-image picture">
+                        <div class="carousel-caption"> "Wesley" mount with OptiTrack markers (our mannequin head is named Wesley because Wesley wasn't there when we named it) </div>
+                    </div>
+                    <div class="carousel-card">
+                        <img src="website/images/mechanical_implementation/trimetric_back.jpg" alt="Gantry Assembly" class="carousel-image picture">
+                        <div class="carousel-caption"> Back Trimetric View </div>
+                    </div>
+                    <a class="prev-button" onclick="plusSlides(-1)">&#10094;</a>
+                    <a class="next-button" onclick="plusSlides(1)">&#10095;</a>
+                </div>
             </div>
             <div class="subsection" id="electrical-implementation">
                 <h3> Electrical </h3>
-
-                <p> blah</p>
+                <p> This is the PCB mounted and wired to all the stepper drivers.  You may notice that there are only 5 motor drivers, despite us having 6 motors.  This is because the Z axis motor is closed-loop and has a built-in stepper driver.</p>
+                <img src="website/images/electrical_implementation/board_2.jpg" alt="PCB and motor drivers" class="picture center">
+                <p> This motor had an issue with the 3.3V logic on the STM32 for only the DIR pin, so we had to create a pull-up for the signal to 5V, which was done with a random NAND gate chip we found and a mini breadboard. </p>
+                <br>
+                <p> We also had some issues with the encoder wires, this time due to software issues with the STM32 on certain pins.  So, we rewired a few of the encoder pins. </p>
+                <img src="website/images/electrical_implementation/rerouting.jpg" alt="Rerouted traces" class="picture center">
             </div>
             <div class="subsection" id="software-implementation">
                 <h3> Software </h3>
-                <img src="website/images/software-architecture.png" alt="Software architecture flowchart" class="picture center">
-                <p> blah</p>
                 <h4> Head GUI </h4>
                 <p> A python GUI allows a user to select head zones.  This ran independently of RVIZ.  Not all points on the head are selectable since the back half is unreachable.  An even point density cloud was achieved with voxel down-sampling.  The GUI transforms the head normal vectors and points to the world frame and publishes them. </p>
                 <img src="website/images/head_gui_demo.gif" alt="Head GUI demo" class="picture center" id="demo-animation">
@@ -92,16 +139,87 @@
             </div>
         </div>
         <div class="section", id="results"> 
-            <h2> Results </h2>
-        </div>
-        <div class="section", id="conclusion"> 
-            <h2> Conclusion </h2>
+            <h2> Results and Conclusion </h2>
+            <p> Ultimately, our project functioned fairly well.  It was able to target a point on our mannequin head and then touch it at that point. </p>
+            <iframe class="center" style="aspect-ratio: 16/9;" src="https://www.youtube.com/embed/CVe0IXFgKIg" title="EECS C106A MRI Robot Demonstration Video" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+            <p> However, it still has a long way to go.  We had several issues in the current solution, and have more features we want to implement for this project. </p>
+            <div style="display: flex; align-items: baseline">
+                <div style="width: 50%">
+                    <p style="text-align: center;"> <b>Issues</b> </p>
+                    <ul>
+                        <li> Encoders on the revolute joints didn't work, which we believe was due to electromagnetic interference from the motors. If this is a problem now, it will be even worse in the multi-Tesla magnetic field of the MRI, so we have to get new encoders. </li>
+                        <li> The OptiTrack software license we have is from 2011, so it has a lot of quirks and was kind of unreliable.  Also, the calibration of the system takes forever and often fails to be perfect.  We may end up reconfiguring the cameras to target the mannequin head more directly, or find another tracking system to localize the head. </li>
+                        <li> MoveIt's inverse kinematics solver was really finicky, which we believe is partially due to our quaternion implementation, and partly due to the solver not being optimized for prismatic joints.  So, we plan to create a custom IK solver, since with our current robot architecture, it is rather simple to derive. </li>
+                    </ul>
+                </div>
+                <div style="width: 50%">
+                    <p style="text-align: center;"> <b>Future plans</b> </p>
+                    <ul>
+                        <li> Integrate non-ferromagnetic ultrasonic motors </li>
+                        <li> Finish iterating on the Series Elastic Actuator (SEA) design and integrate it into the robot to allow for more force sensing </li>
+                        <li> Get a new, non-ferromagnetic and more reliable force/torque sensor (we've been having connectivity issues) </li>
+                        <li> Rebuild the gantry without any ferromagnetic materials, buy a new, larger one, or switch to an articulated arm architecture </li>
+                        <li> Use the torque reading from the sensor to automatically get closer to truly tangent to the head </li>
+                        <li> Create a UI to allow a therapist to manually dial in the position of the TMS coil </li>
+                    </ul>
+                </div>
+            </div>
         </div>
         <div class="section", id="team"> 
             <h2> Team </h2>
+            <div class="team-container">
+                <div class="team-member">
+                    <img src="website/images/team/david_guo.jpg" alt="David Guo" class="team-picture">
+                    <div class="team-text">
+                        <div class="team-name"> <b>David Guo</b> - MechE </div>
+                        <div class="team-desc"> Mechanical Engineering major and EECS minor, experience with CAD and simulation programs, rapid prototyping and manufacturing skills </div>
+                    </div>
+                </div>
+                <div class="team-member">
+                    <img src="website/images/team/naichen_zhao.jpeg" alt="Naichen Zhao" class="team-picture">
+                    <div class="team-text">
+                        <div class="team-name"> <b>Naichen Zhao</b> - EECS/MechE </div>
+                        <div class="team-desc"> EECS and Mechanical Engineering Major, general experience across software, mechanical, and electrical engineering </div>
+                    </div>
+                </div>
+                <div class="team-member">
+                    <img src="website/images/team/wesley_jiang.jpeg" alt="Wesley Jiang" class="team-picture">
+                    <div class="team-text">
+                        <div class="team-name"> <b>Wesley Jiang</b> - EECS </div>
+                        <div class="team-desc"> EECS major, experienced with coding and debugging electronics </div>
+                    </div>
+                </div>
+                <div class="team-member">
+                    <img src="website/images/team/cedric_murphy.jpeg" alt="Cedric Murphy" class="team-picture">
+                    <div class="team-text">
+                        <div class="team-name"> <b>Cedric Murphy</b> - EECS </div>
+                        <div class="team-desc"> EECS major, PCB, Digital/Analog Design, Ex-Lockheed Martin Intern </div>
+                    </div>
+                </div>
+                <div class="team-member">
+                    <img src="website/images/team/charles_paxson.jpg" alt="Charles Paxson" class="team-picture">
+                    <div class="team-text">
+                        <div class="team-name"> <b>Charles Paxson</b> - MechE </div>
+                        <div class="team-desc"> Mechanical Engineering major and EECS minor, with six years of experience in FIRST competitive robotics.  Well-versed with CAD, 3D printing, and basic electronics. </div>
+                    </div>
+                </div>
+            </div>
         </div>
         <div class="section", id="additional-materials"> 
             <h2> Additional Materials </h2>
+            <p> All of our data is available on our <a href="https://github.com/naichenzhao/EECS106A_Project">GitHub repository</a>! </p>
+            <p><code>ros_workspaces</code> - ROS workspace containing all our nodes</p>
+            <p><code>EECS106a_STM32</code> - STM32 firmware</p>
+            <p><code>SLD_exporter</code> - CAD files</p>
+            <p><code>master_node</code> - PCB design files</p>
+            <p><code>website</code> - Website assets</p>
+        </div>
+        <div class="subsection", id="credits">
+            <h3> Credits</h3>
+            <h4>Website</h4>
+            <ul>
+                <li> Image slideshow code - <a href="https://www.w3schools.com/howto/howto_js_slideshow.asp">W3Schools</a></li>
+            </ul>
         </div>
     </div>
     <div class="sidebar">
@@ -115,17 +233,11 @@
                 <li><a class="toc-subsection" href="#hardware-implementation">Hardware</a></li>
                 <li><a class="toc-subsection" href="#electrical-implementation">Electrical</a></li>
                 <li><a class="toc-subsection" href="#software-implementation">Software</a></li>
-            <li><a class="toc-section" href="#results">Results</a></li>
-            <li><a class="toc-section" href="#conclusion">Conclusion</a></li>
+            <li><a class="toc-section" href="#results">Results & Conclusion</a></li>
             <li><a class="toc-section" href="#team">Team</a></li>
             <li><a class="toc-section" href="#additional-materials">Additional Materials</a></li>
         </ul>
     </div>
-    <footer id="footer">
-    <a href="https://github.com/naichenzhao/EECS106A_Project" target="_blank" id="github-link">
-        <span id="github-text">GitHub</span>
-        <img src="website/images/github_logo.png" alt="Github" id="github-icon">
-    </a>
-</footer>
 </body>
+<script src="website/scripts/scripts.js"></script>
 </html>
