@@ -14,7 +14,7 @@
     <meta name="description" content="UC Berkeley EECS C106A Fall 2023 Project Report" \>
 
     <!-- Style info -->
-    <link rel="stylesheet" href="website/styles/styles.css" />
+    <link rel="stylesheet" href="ee106a_project_assets/styles/styles.css" />
     <script src='https://cdn.plot.ly/plotly-2.27.0.min.js'></script>
 	<script src='https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js'></script>
 </head>
@@ -39,13 +39,13 @@
                 <h3> Hardware </h3>
                 <h4> Design Overview </h4>
                 <p> We designed a 6-axis robot, composed of two main assemblies: a 3 axis Cartesian gantry, and a 3 axis rotating end effector.</p>
-                <img src="website/images/design/robot_cad.png" alt="Robot CAD image" class="picture center">
-                <p> The rotating end effector then has two parts: a rotation joint and a two-axis differential wrist joint.  We use this differential joint instead of discreetly actuating the pitch and yaw axes to make one motor move less, and to make the end effector more compact. </p>
-                <img src="website/images/design/differential_joint.png" alt="Differential joint image" class="picture center">
+                <img src="ee106a_project_assets/images/design/robot_cad.png" alt="Robot CAD image" class="picture center">
+                <p> The rotating end effector then has two parts: a rotation joint and a two-axis differential wrist joint.  We use this differential joint instead of discreetly actuating the pitch and yaw axes to reduce the number of wires that need to move around a joint, and to make the end effector more compact. </p>
+                <img src="ee106a_project_assets/images/design/differential_joint.png" alt="Differential joint image" class="picture center">
                 <p> Each of the prismatic joints is belt-driven directly by the stepper motors. </p>
                 <p> The rotating joint (roll) connecting the gantry to the wrist has a worm drive. </p>
                 <p> The wrist joint has 2 axes, each driven by a pancake stepper motor with a 15:1 3D printed cycloidal drive.  These drives have custom bearings with nylon balls running in 3D printed races. </p>
-                <img src="website/images/design/cycloidal_drive_cad.png" alt="Cycloidal drive image" class="picture center">
+                <img src="ee106a_project_assets/images/design/cycloidal_drive_cad.png" alt="Cycloidal drive image" class="picture center">
                 <p> These drive timing belts that move the two sides of a bevel gear differential, upon which is mounted our force/torque sensor and end effector. </p>
                 <h4> Design Choices and Trade-offs </h4>
                 <p> When we began this project, the Cartesian gantry had already been bought, and unfortunately its range of motion was rather lacking.  We had to offset the wrist joint from the rotation joint to give us a usable reachable workspace that would let us reach either side of an adult human's head.  We also had to cut down the workspace, so the arm can only either reach the front half of a person's head, and the back half, with the patient simply be turned over on the tray to reach the other side. </p>
@@ -56,7 +56,7 @@
                 <h3> Electrical </h3>
                 <p> Since we are just working on a prototype, we decided to drive our robot with stepper motors, since they are precise and easy to use.</p>
                 <p> To make the wiring between the encoders, motor drivers, and microcontroller simpler, we designed a custom PCB with a socket to directly plug in the STM32 Nucleo microcontroller.  It manages power conversions from 24V to 5V and 3.3V.  It greatly simplifies wiring and minimizes harnessing issues.</p>
-                <img src="website/images/design/pcb_cad.png" alt="PCB image" class="picture center">
+                <img src="ee106a_project_assets/images/design/pcb_cad.png" alt="PCB image" class="picture center">
                 <p> It has five main features for each motor: </p>
                 <ul>
                     <li> A STEP/DIR/ENA interface to each stepper driver </li>
@@ -65,10 +65,11 @@
                     <li> A ENA switch to toggle individual motors </li>
                     <li> A XT-60 connector for power to stepper drivers. (this connector has a 60A rating and we will draw at most 1A at 24V) </li>
                 </ul>
+                <p> The X, Y, and all three revolute axes are driven by TB6600 stepper drivers, which were perfect for our application since they can supply high current and were quite cheap.</p>
             </div>
             <div class="subsection" id="software-design"> 
                 <h3> Software </h3>
-                <img src="website/images/software-architecture.png" alt="Software architecture flowchart" class="picture center">
+                <img src="ee106a_project_assets/images/software-architecture.png" alt="Software architecture flowchart" class="picture center">
                 <h4> Controller </h4>
                 <p> Runs ROS Noetic on a Ubuntu 20.04 VM. There are five main nodes: </p>
                 <ul>
@@ -105,31 +106,31 @@
                 <br>
                 <div class="carousel">
                     <div class="carousel-card">
-                        <img src="website/images/mechanical_implementation/trimetric_front.jpg" alt="Gantry assembly" class="carousel-image picture">
+                        <img src="ee106a_project_assets/images/mechanical_implementation/trimetric_front.jpg" alt="Gantry assembly" class="carousel-image picture">
                         <div class="carousel-caption"> Front Trimetric View </div>
                     </div>
                     <div class="carousel-card">
-                        <img src="website/images/mechanical_implementation/differential_joint.jpg" alt="Differential joint" class="carousel-image picture">
+                        <img src="ee106a_project_assets/images/mechanical_implementation/differential_joint.jpg" alt="Differential joint" class="carousel-image picture">
                         <div class="carousel-caption"> Differential Joint with Limit Switches </div>
                     </div>
                     <div class="carousel-card">
-                        <img src="website/images/mechanical_implementation/cycloidal_drive.jpg" alt="Cycloidal drive" class="carousel-image picture">
+                        <img src="ee106a_project_assets/images/mechanical_implementation/cycloidal_drive.jpg" alt="Cycloidal drive" class="carousel-image picture">
                         <div class="carousel-caption"> Mounted Cycloidal Drive </div>
                     </div>
                     <div class="carousel-card">
-                        <img src="website/images/mechanical_implementation/rotation_joint.jpg" alt="Rotation Joint" class="carousel-image picture">
+                        <img src="ee106a_project_assets/images/mechanical_implementation/rotation_joint.jpg" alt="Rotation Joint" class="carousel-image picture">
                         <div class="carousel-caption"> Rotation Joint with Motor Mount and Limit Switch </div>
                     </div>
                     <div class="carousel-card">
-                        <img src="website/images/mechanical_implementation/arm_offset.jpg" alt="Wrist offset mount" class="carousel-image picture">
+                        <img src="ee106a_project_assets/images/mechanical_implementation/arm_offset.jpg" alt="Wrist offset mount" class="carousel-image picture">
                         <div class="carousel-caption"> Wrist Arm Offset Mount </div>
                     </div>
                     <div class="carousel-card">
-                        <img src="website/images/mechanical_implementation/wesley_mount.jpg" alt="Mannequin bracket" class="carousel-image picture">
+                        <img src="ee106a_project_assets/images/mechanical_implementation/wesley_mount.jpg" alt="Mannequin bracket" class="carousel-image picture">
                         <div class="carousel-caption"> "Wesley" mount with OptiTrack markers (our mannequin head is named Wesley because <i>true</i> Wesley wasn't there when we named it) </div>
                     </div>
                     <div class="carousel-card">
-                        <img src="website/images/mechanical_implementation/trimetric_back.jpg" alt="Gantry Assembly" class="carousel-image picture">
+                        <img src="ee106a_project_assets/images/mechanical_implementation/trimetric_back.jpg" alt="Gantry Assembly" class="carousel-image picture">
                         <div class="carousel-caption"> Back Trimetric View </div>
                     </div>
                     <a class="prev-button" onclick="plusSlides(-1)">&#10094;</a>
@@ -139,22 +140,46 @@
             <div class="subsection" id="electrical-implementation">
                 <h3> Electrical </h3>
                 <p> This is the PCB mounted and wired to all the stepper drivers.  You may notice that there are only 5 motor drivers, despite us having 6 motors.  This is because the Z axis motor is closed-loop and has a built-in stepper driver.</p>
-                <img src="website/images/electrical_implementation/board_2.jpg" alt="PCB and motor drivers" class="picture center">
+                <img src="ee106a_project_assets/images/electrical_implementation/board_2.jpg" alt="PCB and motor drivers" class="picture center">
                 <p> This motor had an issue with the 3.3V logic on the STM32 for only the DIR pin, so we had to create a pull-up for the signal to 5V, which was done with a random NAND gate chip we found and a mini breadboard. </p>
                 <br>
                 <p> We also had some issues with the encoder wires, this time due to software issues with the STM32 on certain pins.  So, we rewired a few of the encoder pins. </p>
-                <img src="website/images/electrical_implementation/rerouting.jpg" alt="Rerouted traces" class="picture center">
+                <img src="ee106a_project_assets/images/electrical_implementation/rerouting.jpg" alt="Rerouted traces" class="picture center">
             </div>
             <div class="subsection" id="software-implementation">
                 <h3> Software </h3>
                 <h4> Head GUI </h4>
-                <img src="website/images/head_gui_demo.gif" alt="Head GUI demo" class="picture center" id="demo-animation">
+                <img src="ee106a_project_assets/images/head_gui_demo.gif" alt="Head GUI demo" class="picture center" id="demo-animation">
                 <p> A python GUI allows a user to select head zones.  This ran independently of RVIZ.  Not all points on the head are selectable since the back half is unreachable.  An even point density cloud was achieved with voxel down-sampling.  The GUI transforms the head normal vectors and points to the world frame and publishes them. </p>
                 <div id="head_gui_plot"></div>
                 <i class="caption"> Point cloud data shown with Plotly.js instead of Matplotlib, which we use with ROS. </i>
                 <h4> Path Planner </h4>
-                <h4> STM32 Interface </h4>
+                <p>The path planner waits for a target point and normal vector from the Head GUI node, and when it gets a target, it transforms the point and normal vector to the robot frame using the OptiTrack data.
+                </p>
+                <p>It takes this target position and calculates a corresponding position on a "safety sphere" that is larger than the head, and sends both of these positions to MoveIt for inverse kinematics.</p>
+                <img src="ee106a_project_assets/images/moveit.png" alt="Head and safety sphere" class="picture center" style="border-radius: 5px;">
+                <i class="caption"> Robot shown about the head point cloud with the safety sphere in MoveIt</i>
+                <p>With the returned joint positions, it sends commands through the STM32 Interface to the robot to first move to a home position on the correct side of the head, before plunging into the position on the "safety sphere".</p>
+                <p>At this point, it switches to "critical" mode, where the robot will move much slower, and plunge towards the head while taking continuously checking the force from the F/T sensor.  When it reaches a threshold, the robot stops and backs up slightly.  At this point, TMS could be conducted on the patient.</p>
+                <p>Finally, the planner executes similar steps in reverse to safely retract from the head and wait for the next target point.</p>
                 <h4> STM32 Firmware </h4>
+                <p>The firmware receives serial commands containing the motor positions each joint should move to. </p>
+                <p> The motors are controlled using the AccelStepper library, which allows us to send either a position or velocity command to each motor.  This made implementing both open-loop control and closed-loop PID control much easier. </p>
+                <p> There are then two speed states: "standard" and "critical".  Standard mode is used to move and position far away from the head, and while approaching the head we use the critical mode to move much slower and listen for a stop command from serial. </p>
+                <h4> STM32 Interface </h4>
+                <p> The STM32 interface node takes messages from the data from the path planner and sends it over serial to the STM32 for execution.  It also takes the encoder readings from the STM32 and sends them to RViz to allow the robot model to update its position in real-time. </p>
+                <h4> OptiTrack </h4>
+                <p> We reused the OptiTrack setup that our lab already had, but we had to redo the calibration and learn the ins and outs of the system.  It consists of 8 IR cameras with IR emitters that are connected over USB to a desktop PC running an application called <a href="https://optitrack.com/software/motive/">Motive</a>. </p>
+                <img src="ee106a_project_assets/images/optitrack_cameras.jpg" alt="Mounted OptiTrack cameras" class="picture center">
+                <p> Motive filters the images from these cameras to isolate the IR reflective tracking points, and uses two-view geometry to locate them in 3D space.  A set of at least 3 points can be combined into a "trackable", which allows it to calculate a 3D pose of the object.</p>
+                <div class="side-by-side">
+                    <img src="ee106a_project_assets/images/motive_trackables.jpg" alt="Motive tracking objects" class="picture side-by-side-images">
+                    <img src="ee106a_project_assets/images/rviz_trackables.jpg" alt="RViz tracking objects" class="picture side-by-side-images">
+                </div>
+                <p> Our Motive license is from 2011, and it would cost at least $1000 to update.  We had a lot of issues calibrating the cameras, which could possibly have been solved with a newer version of the software that continuously refines the calibration as the system is used.  Even with the issues, though, we were able to get decent tracking data sent to ROS. </p>
+                <p> However, even if we updated the software, Motive is only compatible with Windows.  This meant that, to be compatible with all our ROS software, we had to use a separate Ubuntu computer for ROS and a Windows computer for Motive, using the Virtual Reality Peripheral Network (VRPN) interface to transfer the tracking data over a local network. </p>
+                <img src="ee106a_project_assets/images/optitrack_system.png" alt="OptiTrack block diagram" class="picture center">
+                <i class="caption">The blue box on the right represents a USB hub, connecting the cameras to the Motive PC, and then uses VRPN to send data through a LAN to ROS.</i>
             </div>
         </div>
         <div class="section", id="results"> 
@@ -188,38 +213,38 @@
             <h2> Team </h2>
             <div class="team-container">
                 <div class="team-member">
-                    <img src="website/images/team/david_guo.jpg" alt="David Guo" class="team-picture">
+                    <img src="ee106a_project_assets/images/team/david_guo.jpg" alt="David Guo" class="team-picture">
                     <div class="team-text">
                         <div class="team-name"> <b>David Guo</b> - MechE </div>
-                        <div class="team-desc"> Mechanical Engineering major and EECS minor, experience with CAD and simulation programs, rapid prototyping and manufacturing skills </div>
+                        <div class="team-desc"> MechE major and EECS minor. Experience in mechanical engineering design for collegiate Formula SAE competition series. </div>
                     </div>
                 </div>
                 <div class="team-member">
-                    <img src="website/images/team/naichen_zhao.jpeg" alt="Naichen Zhao" class="team-picture">
+                    <img src="ee106a_project_assets/images/team/naichen_zhao.jpg" alt="Naichen Zhao" class="team-picture">
                     <div class="team-text">
                         <div class="team-name"> <b>Naichen Zhao</b> - EECS/MechE </div>
-                        <div class="team-desc"> EECS and Mechanical Engineering Major, general experience across software, mechanical, and electrical engineering </div>
+                        <div class="team-desc"> EECS and Mechanical Engineering Major. I am very good at breaking robots and burning motor controllers </div>
                     </div>
                 </div>
                 <div class="team-member">
-                    <img src="website/images/team/wesley_jiang.jpeg" alt="Wesley Jiang" class="team-picture">
+                    <img src="ee106a_project_assets/images/team/wesley_jiang.jpg" alt="Wesley Jiang" class="team-picture">
                     <div class="team-text">
                         <div class="team-name"> <b>Wesley Jiang</b> - EECS </div>
-                        <div class="team-desc"> EECS major, experienced with coding and debugging electronics </div>
+                        <div class="team-desc"> Hi! This was my first time ever attempting anything in robotics. In the past, I've taken analog/digital/software courses here at Cal. On the side, I like to try to fix up old broken tech. </div>
                     </div>
                 </div>
                 <div class="team-member">
-                    <img src="website/images/team/cedric_murphy.jpeg" alt="Cedric Murphy" class="team-picture">
+                    <img src="ee106a_project_assets/images/team/cedric_murphy.jpeg" alt="Cedric Murphy" class="team-picture">
                     <div class="team-text">
                         <div class="team-name"> <b>Cedric Murphy</b> - EECS </div>
                         <div class="team-desc"> EECS major, PCB, Digital/Analog Design, Ex-Lockheed Martin Intern </div>
                     </div>
                 </div>
                 <div class="team-member">
-                    <img src="website/images/team/charles_paxson.jpg" alt="Charles Paxson" class="team-picture">
+                    <img src="ee106a_project_assets/images/team/charles_paxson_photo.jpg" alt="Charles Paxson" class="team-picture">
                     <div class="team-text">
                         <div class="team-name"> <b>Charles Paxson</b> - MechE </div>
-                        <div class="team-desc"> Mechanical Engineering major and EECS minor, with six years of experience in FIRST competitive robotics.  Well-versed with CAD, 3D printing, and basic electronics. </div>
+                        <div class="team-desc"> Mechanical Engineering major and EECS minor, with six years of experience in FIRST competitive robotics.  Well-versed with CAD, 3D printing, and basic electronics.</div>
                     </div>
                 </div>
             </div>
@@ -278,5 +303,5 @@
         </ul>
     </div>
 </body>
-<script src="website/scripts/scripts.js"></script>
+<script src="ee106a_project_assets/scripts/scripts.js"></script>
 </html>

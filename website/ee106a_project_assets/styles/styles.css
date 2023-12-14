@@ -71,6 +71,16 @@ a {
     width: 60%;
 }
 
+.side-by-side {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5vw;
+}
+.side-by-side-images {
+    width: 30%;
+}
+
 /* TOC */
     .sidebar {
         position: fixed;
