@@ -38,13 +38,16 @@
             <div class="subsection" id="hardware-design">
                 <h3> Hardware </h3>
                 <h4> Design Overview </h4>
-                <p> We designed a 6-axis robot, composed of two main assemblies: a 3 axis Cartesian gantry, and a 3 axis rotating end effector.</p>
+                <p> We designed a 6-axis robot, composed of two main assemblies: a 3 axis Cartesian gantry, and a 3 axis rotating arm.</p>
                 <img src="ee106a_project_assets/images/design/robot_cad.png" alt="Robot CAD image" class="picture center">
-                <p> The rotating end effector then has two parts: a rotation joint and a two-axis differential wrist joint.  We use this differential joint instead of discreetly actuating the pitch and yaw axes to reduce the number of wires that need to move around a joint, and to make the end effector more compact. </p>
+                <p> Each of the prismatic joints in the Cartesian gantry is belt-driven directly by the stepper motors. </p>
+                <br>
+                <p> The rotating arm has two systems, a two-axis differential wrist joint for pitch and yaw, and a rotation joint for roll.</p>
+                <p>The roll joint's input is directly coupled to a stepper motor, and contains a worm drive to the output.</p>
+                <img src="ee106a_project_assets/images/design/rotation_joint.png" alt="Rotation joint image" class="picture center">
+                <p>We chose to use a differential joint, similar in concept to a coreXY system, rather than discreetly actuating the pitch and yaw axes for several reasons. It allows us to mount both actuators to the body of the rotating arm rather than sequentially, reducing the size and complexity of the joint while also allowing us flexibility to position the motors further away from the wrist. The motor positioning also grants us additional space to mount gearboxes and reduces overall cantilever forces from the arm. </p>
                 <img src="ee106a_project_assets/images/design/differential_joint.png" alt="Differential joint image" class="picture center">
-                <p> Each of the prismatic joints is belt-driven directly by the stepper motors. </p>
-                <p> The rotating joint (roll) connecting the gantry to the wrist has a worm drive. </p>
-                <p> The wrist joint has 2 axes, each driven by a pancake stepper motor with a 15:1 3D printed cycloidal drive.  These drives have custom bearings with nylon balls running in 3D printed races. </p>
+                <p> It has two inputs, each driven by a pancake stepper motor with a 15:1 3D printed cycloidal drive.  These drives have custom bearings with nylon balls running in 3D printed races. </p>
                 <img src="ee106a_project_assets/images/design/cycloidal_drive_cad.png" alt="Cycloidal drive image" class="picture center">
                 <p> These drive timing belts that move the two sides of a bevel gear differential, upon which is mounted our force/torque sensor and end effector. </p>
                 <h4> Design Choices and Trade-offs </h4>
